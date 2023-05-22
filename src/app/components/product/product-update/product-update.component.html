@@ -1,0 +1,45 @@
+<div class="container">
+    <h1>Update Product</h1>
+  
+    <form [formGroup]="productForm" (ngSubmit)="updateProduct()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" formControlName="name" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" formControlName="description"></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label for="brandId">Brand ID</label>
+        <input type="text" class="form-control" id="brandId" formControlName="brandId">
+      </div>
+  
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" class="form-control" id="price" formControlName="price" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" class="form-control" id="quantity" formControlName="quantity" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="currencyId">Currency ID</label>
+        <input type="text" class="form-control" id="currencyId" formControlName="currencyId" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="categoryId">Category ID</label>
+        <input type="text" class="form-control" id="categoryId" formControlName="categoryId" required>
+      </div>
+  
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </form>
+  </div>
+  

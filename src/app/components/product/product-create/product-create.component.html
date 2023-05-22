@@ -1,0 +1,80 @@
+<div class="modal-header">
+  <h4 class="modal-title">Add Product</h4>
+  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body p-4">
+  <form [formGroup]="productForm" (ngSubmit)="createProduct()">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" formControlName="name">
+      <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-danger">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea class="form-control" id="description" formControlName="description"></textarea>
+      <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched" class="text-danger">
+        Description is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="brand">Brand</label>
+      <select class="form-control" id="brand" formControlName="brandId">
+        <option value="" disabled>Select a brand</option>
+        <option *ngFor="let brand of brands" [value]="brand._id">{{ brand.name }}</option>
+      </select>
+      <div *ngIf="productForm.get('brandId')?.invalid && productForm.get('brandId')?.touched" class="text-danger">
+        Brand is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="number" class="form-control" id="price" formControlName="price">
+      <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-danger">
+        Price is required and must be a positive number.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="quantity">Quantity</label>
+      <input type="number" class="form-control" id="quantity" formControlName="quantity">
+      <div *ngIf="productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched" class="text-danger">
+        Quantity is required and must be a positive number.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="currency">Currency</label>
+      <select class="form-control" id="currency" formControlName="currencyId">
+        <option value="" disabled>Select a currency</option>
+        <option *ngFor="let currency of currencies" [value]="currency._id">{{ currency.name }}</option>
+      </select>
+      <div *ngIf="productForm.get('currencyId')?.invalid && productForm.get('currencyId')?.touched" class="text-danger">
+        Currency is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select class="form-control" id="category" formControlName="categoryId">
+        <option value="" disabled>Select a category</option>
+        <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
+      </select>
+      <div *ngIf="productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched" class="text-danger">
+        Category is required.
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Save</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -2,9 +2,9 @@
   "name": "bd-frontend",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "ng": "NODE_OPTIONS=--openssl-legacy-provider ng",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider ng serve",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -18,6 +18,11 @@
     "@angular/platform-browser": "~12.2.0",
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
+    "@fortawesome/fontawesome-free": "^6.4.0",
+    "@ng-bootstrap/ng-bootstrap": "^10.0.0",
+    "bootstrap": "^5.2.3",
+    "jquery": "^3.7.0",
+    "popper.js": "^1.16.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

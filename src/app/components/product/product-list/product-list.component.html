@@ -1,0 +1,60 @@
+<h2>Product List</h2>
+
+<div class="table-responsive">
+
+  <div class="row mb-3">
+    <div class="col text-end">
+      <button class="btn btn-primary" (click)="openProductCreateModal()">
+        <i class="fas fa-plus"></i> Add Product
+      </button>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col">
+      <div class="input-group">
+        <span class="input-group-text">
+          <i class="fas fa-search"></i>
+        </span>
+        <input type="text" class="form-control" placeholder="Product Name" [(ngModel)]="productName"
+          (keyup.enter)="searchProducts()">
+      </div>
+    </div>
+    <div class="col">
+      <select class="form-select" [(ngModel)]="categoryId" (change)="searchProducts()">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
+      </select>
+    </div>
+    <div class="col">
+      <select class="form-select" [(ngModel)]="brandId" (change)="searchProducts()">
+        <option value="">All Brands</option>
+        <option *ngFor="let brand of brands" [value]="brand._id">{{ brand.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Brand</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products">
+        <td>{{ product.name }}</td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.brandId }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.quantity }}</td>
+        <td>
+          <button class="btn btn-danger" (click)="deleteProduct(product._id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
