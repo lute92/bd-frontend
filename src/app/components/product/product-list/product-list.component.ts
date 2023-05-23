@@ -16,9 +16,14 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
+  currentPage = 1;
+  totalPages = 1;
+  recordLimitParPage = 10;
+
   productName: string = "";
   categoryId: string = "";
   brandId: string = "";
+
   products: IProduct[] = [];
   categories: ICategory[] = [];
   brands: IBrand[] = [];
@@ -62,8 +67,8 @@ export class ProductListComponent implements OnInit {
   searchProducts(): void {
     this.productService.searchProducts(this.productName, this.brandId, this.categoryId)
       .subscribe(
-        (response) => {
-          this.products = response;
+        (response:any) => {
+          this.products = response.products;
         },
         (error) => {
           console.error(error);
@@ -72,14 +77,22 @@ export class ProductListComponent implements OnInit {
   }
 
   getProducts(): void {
-    this.productService.getProducts().subscribe(
-      (products: IProduct[]) => {
-        this.products = products;
+    this.productService.getProducts(this.currentPage, this.recordLimitParPage).subscribe(
+      (res: any) => {
+        this.products = res.products;
+        this.totalPages = res.totalPages;
       },
       (error) => {
         console.log('Failed to retrieve products:', error);
       }
     );
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.getProducts();
+    }
   }
 
   deleteProduct(id: string): void {

@@ -40,11 +40,11 @@ export class ProductUpdateComponent implements OnInit {
       this.productForm.patchValue({
         name: product.name,
         description: product.description,
-        brandId: product.brandId,
+        brand: product.brand,
         price: product.price,
         quantity: product.quantity,
-        currencyId: product.currencyId,
-        categoryId: product.categoryId
+        currency: product.currency,
+        category: product.currency
       });
     });
   }
@@ -58,11 +58,11 @@ export class ProductUpdateComponent implements OnInit {
       _id: this.productId,
       name: this.productForm.value.name,
       description: this.productForm.value.description,
-      brandId: this.productForm.value.brandId,
+      brand: this.productForm.value.brand,
       price: this.productForm.value.price,
       quantity: this.productForm.value.quantity,
-      currencyId: this.productForm.value.currencyId,
-      categoryId: this.productForm.value.categoryId
+      currency: this.productForm.value.currency,
+      category: this.productForm.value.category
     };
 
     this.productService.updateProduct(this.productId, productData).subscribe(() => {

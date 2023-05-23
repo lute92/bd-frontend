@@ -28,7 +28,7 @@ export class ProductCreateComponent implements OnInit {
     private categoryService: CategoryService,
     public modal: NgbActiveModal,
     private formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initProductForm();
@@ -41,11 +41,11 @@ export class ProductCreateComponent implements OnInit {
     this.productForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      brandId: ['', Validators.required],
+      brand: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
       quantity: ['', [Validators.required, Validators.min(0)]],
-      currencyId: ['', Validators.required],
-      categoryId: ['', Validators.required]
+      currency: ['', Validators.required],
+      category: ['', Validators.required]
     });
   }
 
@@ -68,18 +68,34 @@ export class ProductCreateComponent implements OnInit {
   }
 
   createProduct(): void {
-    if (this.productForm.valid) {
-      const newProduct = this.productForm.value;
-
-      this.productService.createProduct(newProduct).subscribe(
-        () => {
-          this.modal.close('success');
+    if (this.productForm.invalid) {
+      return;
+    }
+  
+    const { name, description, price, quantity, brand, currency, category } = this.productForm.value;
+  
+    const product = {
+      _id:"",
+      name,
+      description,
+      brand: brand || null,
+      price,
+      quantity,
+      currency: currency || null,
+      category: category || null
+    };
+  
+    this.productService.createProduct(product)
+      .subscribe(
+        response => {
+          console.log('Product created successfully:', response);
+          // Reset the form after successful creation
+          this.productForm.reset();
         },
         error => {
           console.error('Failed to create product:', error);
-          // Handle error if needed
         }
       );
-    }
   }
+  
 }

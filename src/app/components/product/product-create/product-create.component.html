@@ -25,7 +25,7 @@
 
     <div class="form-group">
       <label for="brand">Brand</label>
-      <select class="form-control" id="brand" formControlName="brandId">
+      <select class="form-control" id="brand" formControlName="brand">
         <option value="" disabled>Select a brand</option>
         <option *ngFor="let brand of brands" [value]="brand._id">{{ brand.name }}</option>
       </select>
@@ -52,7 +52,7 @@
 
     <div class="form-group">
       <label for="currency">Currency</label>
-      <select class="form-control" id="currency" formControlName="currencyId">
+      <select class="form-control" id="currency" formControlName="currency">
         <option value="" disabled>Select a currency</option>
         <option *ngFor="let currency of currencies" [value]="currency._id">{{ currency.name }}</option>
       </select>
@@ -63,7 +63,7 @@
 
     <div class="form-group">
       <label for="category">Category</label>
-      <select class="form-control" id="category" formControlName="categoryId">
+      <select class="form-control" id="category" formControlName="category">
         <option value="" disabled>Select a category</option>
         <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
       </select>
