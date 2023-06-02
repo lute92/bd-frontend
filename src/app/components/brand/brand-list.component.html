@@ -1,0 +1,42 @@
+<div class="container m-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h2>Brand List</h2>
+      <div class="col text-end">
+        <button class="btn btn-primary mb-3" (click)="addBrand()">
+          <i class="fas fa-plus mr-2"></i><span> Add New </span></button>
+      </div>
+      <div *ngIf="brands.length > 0; else noDataMessage" class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let brand of brands">
+              <td>{{ brand.name }}</td>
+              <td>{{ brand.description }}</td>
+              <td>
+                <button class="btn btn-info btn-sm m-2" (click)="editBrand(brand)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger"
+                  (click)="selectedBrand = brand; deleteConfirmationModal.confirmDelete()"><i
+                    class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noDataMessage>
+        <div class="alert alert-info">No data available.</div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>
+
+<app-delete-confirmation #deleteConfirmationModal></app-delete-confirmation>

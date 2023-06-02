@@ -9,13 +9,18 @@ import { ProductListComponent } from './components/product/product-list/product-
 import { ProductCreateComponent } from './components/product/product-create/product-create.component';
 import { ProductUpdateComponent } from './components/product/product-update/product-update.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { BrandListComponent } from './components/brand/brand-list.component';
+import { DeleteConfirmationComponent } from './components/common/delete-confirmation/delete-confirmation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ProductListComponent,
     ProductCreateComponent,
-    ProductUpdateComponent
+    ProductUpdateComponent,
+    BrandListComponent,
+    DeleteConfirmationComponent
   ],
   imports: [
     BrowserModule,
@@ -23,7 +28,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

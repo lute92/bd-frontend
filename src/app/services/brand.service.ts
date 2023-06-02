@@ -11,7 +11,26 @@ export class BrandService {
 
     constructor(private http: HttpClient) { }
 
-    getBrands(): Observable<IBrand[]> {
-        return this.http.get<IBrand[]>(this.apiUrl);
-    }
+  getBrands(): Observable<IBrand[]> {
+    return this.http.get<IBrand[]>(this.apiUrl);
+  }
+
+  getBrandById(brandId: string): Observable<IBrand> {
+    const url = `${this.apiUrl}/${brandId}`;
+    return this.http.get<IBrand>(url);
+  }
+
+  addBrand(brand: IBrand): Observable<IBrand> {
+    return this.http.post<IBrand>(this.apiUrl, brand);
+  }
+
+  updateBrand(brand: IBrand): Observable<IBrand> {
+    const url = `${this.apiUrl}/${brand.brandId}`;
+    return this.http.put<IBrand>(url, brand);
+  }
+
+  deleteBrand(brandId: string): Observable<void> {
+    const url = `${this.apiUrl}/${brandId}`;
+    return this.http.delete<void>(url);
+  }
 }
