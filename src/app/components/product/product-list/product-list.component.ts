@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product.service';
-import { IProduct } from '../../../models/product';
+import { IProductResponse } from '../../../models/response/IProductResponset';
 import { HttpClient } from '@angular/common/http';
 import { ICategory } from 'src/app/models/category';
 import { IBrand } from 'src/app/models/brand';
@@ -24,7 +24,7 @@ export class ProductListComponent implements OnInit {
   categoryId: string = "";
   brandId: string = "";
 
-  products: IProduct[] = [];
+  products: IProductResponse[] = [];
   categories: ICategory[] = [];
   brands: IBrand[] = [];
 
@@ -36,7 +36,7 @@ export class ProductListComponent implements OnInit {
     private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.getProducts();
+    this.getALLProducts();
     this.loadCategories();
     this.loadBrands();
   }
@@ -68,7 +68,7 @@ export class ProductListComponent implements OnInit {
     this.productService.searchProducts(this.productName, this.brandId, this.categoryId)
       .subscribe(
         (response:any) => {
-          this.products = response.products;
+          this.products = response.data;
         },
         (error) => {
           console.error(error);
@@ -76,10 +76,10 @@ export class ProductListComponent implements OnInit {
       );
   }
 
-  getProducts(): void {
+  getALLProducts(): void {
     this.productService.getProducts(this.currentPage, this.recordLimitParPage).subscribe(
       (res: any) => {
-        this.products = res.products;
+        this.products = res.data;
         this.totalPages = res.totalPages;
       },
       (error) => {
@@ -91,14 +91,14 @@ export class ProductListComponent implements OnInit {
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.getProducts();
+      this.getALLProducts();
     }
   }
 
   deleteProduct(id: string): void {
     this.productService.deleteProduct(id).subscribe(
       () => {
-        this.getProducts();
+        this.getALLProducts();
       },
       (error) => {
         console.log('Failed to delete product:', error);
@@ -111,7 +111,7 @@ export class ProductListComponent implements OnInit {
     modalRef.result.then(
       (result) => {
         if (result === 'success') {
-          this.getProducts();
+          this.getALLProducts();
         }
       },
       () => {}

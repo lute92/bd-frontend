@@ -22,13 +22,13 @@
     <div class="col">
       <select class="form-select" [(ngModel)]="categoryId" (change)="searchProducts()">
         <option value="">All Categories</option>
-        <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
+        <option *ngFor="let category of categories" [value]="category.categoryId">{{ category.name }}</option>
       </select>
     </div>
     <div class="col">
       <select class="form-select" [(ngModel)]="brandId" (change)="searchProducts()">
         <option value="">All Brands</option>
-        <option *ngFor="let brand of brands" [value]="brand._id">{{ brand.name }}</option>
+        <option *ngFor="let brand of brands" [value]="brand.brandId">{{ brand.name }}</option>
       </select>
     </div>
   </div>
@@ -47,14 +47,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let product of products">
-        <td>{{ product.name }}</td>
+        <td>{{ product.productName }}</td>
         <td>{{ product.description }}</td>
         <td>{{ product.brand.name }}</td>
         <td>{{ product.category.name }}</td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.quantity }}</td>
+        <td>{{ product.sellingPrice }}</td>
+        <td>{{ product.totalQuantity }}</td>
         <td>
-          <button class="btn btn-danger" (click)="deleteProduct(product._id)">
+          <button class="btn btn-danger" (click)="deleteProduct(product.productId)">
             <i class="fas fa-trash"></i>
           </button>
         </td>

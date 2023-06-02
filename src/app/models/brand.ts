@@ -1,5 +1,5 @@
 export interface IBrand {
-    _id: string;
+    brandId: string;
     name: string;
     description: string;
 }

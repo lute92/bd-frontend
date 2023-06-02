@@ -7,7 +7,7 @@ import { IBrand } from '../models/brand';
     providedIn: 'root'
   })
 export class BrandService {
-    private apiUrl = 'http://localhost:4900/brands';
+    private apiUrl = 'http://localhost:3000/brands';
 
     constructor(private http: HttpClient) { }
 

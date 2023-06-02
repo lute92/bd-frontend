@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ProductService } from '../../../services/product.service';
-import { IProduct } from '../../../models/product';
+import { IProductRequest } from '../../../models/request/IProductRequest';
+import { IProductResponse } from 'src/app/models/response/IProductResponset';
 
 @Component({
   selector: 'app-product-update',
@@ -20,13 +21,11 @@ export class ProductUpdateComponent implements OnInit {
     private productService: ProductService
   ) {
     this.productForm = this.formBuilder.group({
-      name: ['', Validators.required],
+      productName: ['', Validators.required],
       description: [''],
-      brandId: [''],
-      price: ['', Validators.required],
-      quantity: ['', Validators.required],
-      currencyId: ['', Validators.required],
-      categoryId: ['', Validators.required]
+      brand: [''],
+      sellingPrice: ['', Validators.required],
+      category: ['', Validators.required]
     });
   }
 
@@ -36,15 +35,13 @@ export class ProductUpdateComponent implements OnInit {
   }
 
   loadProduct() {
-    this.productService.getProduct(this.productId).subscribe((product: IProduct) => {
+    this.productService.getProduct(this.productId).subscribe((product: IProductResponse) => {
       this.productForm.patchValue({
-        name: product.name,
+        productName: product.productName,
         description: product.description,
-        brand: product.brand,
-        price: product.price,
-        quantity: product.quantity,
-        currency: product.currency,
-        category: product.currency
+        brand: product.brand.name,
+        sellingPrice: product.sellingPrice,
+        category: product.category.name
       });
     });
   }
@@ -54,14 +51,11 @@ export class ProductUpdateComponent implements OnInit {
       return;
     }
 
-    const productData: IProduct = {
-      _id: this.productId,
-      name: this.productForm.value.name,
+    const productData: IProductRequest = {
+      productName: this.productForm.value.name,
       description: this.productForm.value.description,
       brand: this.productForm.value.brand,
-      price: this.productForm.value.price,
-      quantity: this.productForm.value.quantity,
-      currency: this.productForm.value.currency,
+      sellingPrice: this.productForm.value.price,
       category: this.productForm.value.category
     };
 

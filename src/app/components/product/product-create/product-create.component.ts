@@ -39,12 +39,10 @@ export class ProductCreateComponent implements OnInit {
 
   initProductForm(): void {
     this.productForm = this.formBuilder.group({
-      name: ['', Validators.required],
+      productName: ['', Validators.required],
       description: ['', Validators.required],
       brand: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
-      quantity: ['', [Validators.required, Validators.min(0)]],
-      currency: ['', Validators.required],
       category: ['', Validators.required]
     });
   }
@@ -72,16 +70,14 @@ export class ProductCreateComponent implements OnInit {
       return;
     }
   
-    const { name, description, price, quantity, brand, currency, category } = this.productForm.value;
+    const { productName, description, sellingPrice, brand, category } = this.productForm.value;
   
     const product = {
-      _id:"",
-      name,
+      productId:"",
+      productName,
       description,
       brand: brand || null,
-      price,
-      quantity,
-      currency: currency || null,
+      sellingPrice,
       category: category || null
     };
   
