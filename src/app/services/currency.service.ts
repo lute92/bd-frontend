@@ -7,7 +7,7 @@ import { ICurrency } from '../models/currency';
   providedIn: 'root'
 })
 export class CurrencyService {
-  private apiUrl = 'http://localhost:4900/currencies';
+  private apiUrl = 'http://localhost:3000/currencies';
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +20,7 @@ export class CurrencyService {
   }
 
   updateCurrency(currency: ICurrency): Observable<ICurrency> {
-    const url = `${this.apiUrl}/${currency._id}`;
+    const url = `${this.apiUrl}/${currency.currencyId}`;
     return this.http.put<ICurrency>(url, currency);
   }
 

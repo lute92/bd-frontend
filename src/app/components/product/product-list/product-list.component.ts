@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product.service';
-import { IProduct } from '../../../models/product';
+import { IProductResponse } from '../../../models/response/IProductResponset';
 import { HttpClient } from '@angular/common/http';
 import { ICategory } from 'src/app/models/category';
 import { IBrand } from 'src/app/models/brand';
@@ -16,10 +16,15 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
+  currentPage = 1;
+  totalPages = 1;
+  recordLimitParPage = 10;
+
   productName: string = "";
   categoryId: string = "";
   brandId: string = "";
-  products: IProduct[] = [];
+
+  products: IProductResponse[] = [];
   categories: ICategory[] = [];
   brands: IBrand[] = [];
 
@@ -31,7 +36,7 @@ export class ProductListComponent implements OnInit {
     private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.getProducts();
+    this.getALLProducts();
     this.loadCategories();
     this.loadBrands();
   }
@@ -62,8 +67,8 @@ export class ProductListComponent implements OnInit {
   searchProducts(): void {
     this.productService.searchProducts(this.productName, this.brandId, this.categoryId)
       .subscribe(
-        (response) => {
-          this.products = response;
+        (response:any) => {
+          this.products = response.data;
         },
         (error) => {
           console.error(error);
@@ -71,10 +76,11 @@ export class ProductListComponent implements OnInit {
       );
   }
 
-  getProducts(): void {
-    this.productService.getProducts().subscribe(
-      (products: IProduct[]) => {
-        this.products = products;
+  getALLProducts(): void {
+    this.productService.getProducts(this.currentPage, this.recordLimitParPage).subscribe(
+      (res: any) => {
+        this.products = res.data;
+        this.totalPages = res.totalPages;
       },
       (error) => {
         console.log('Failed to retrieve products:', error);
@@ -82,10 +88,17 @@ export class ProductListComponent implements OnInit {
     );
   }
 
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.getALLProducts();
+    }
+  }
+
   deleteProduct(id: string): void {
     this.productService.deleteProduct(id).subscribe(
       () => {
-        this.getProducts();
+        this.getALLProducts();
       },
       (error) => {
         console.log('Failed to delete product:', error);
@@ -98,7 +111,7 @@ export class ProductListComponent implements OnInit {
     modalRef.result.then(
       (result) => {
         if (result === 'success') {
-          this.getProducts();
+          this.getALLProducts();
         }
       },
       () => {}
