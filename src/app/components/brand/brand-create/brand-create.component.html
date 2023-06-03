@@ -1,0 +1,33 @@
+<form [formGroup]="brandForm" (ngSubmit)="createBrand()" novalidate>
+    <div class="modal-header">
+        <h4 class="modal-title">Create Brand</h4>
+        <button type="button" class="close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="form-group mb-3">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" formControlName="name" required>
+            <div *ngIf="brandForm.get('name')?.invalid && brandForm.get('name')?.touched" class="text-danger">
+                Name is required.
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" formControlName="description" required>
+            <div *ngIf="brandForm.get('description')?.invalid && brandForm.get('description')?.touched"
+                class="text-danger">
+                Description is required.
+            </div>
+        </div>
+
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="brandForm.invalid">Create</button>
+
+    </div>
+</form>
