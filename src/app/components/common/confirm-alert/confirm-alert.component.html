@@ -1,0 +1,20 @@
+<div class="modal alert-box d-flex align-items-center justify-content-center" tabindex="-1" role="dialog"
+    [ngClass]="{'d-block': isOpen}" *ngIf="item">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+                    <i class="fas fa-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>{{message}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" (click)="confirmAction()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -54,7 +54,7 @@ export class ProductListComponent implements OnInit {
   }
 
   loadBrands(): void {
-    this.brandService.getBrands().subscribe(
+    this.brandService.getBrands(0,0).subscribe(
       (brands) => {
         this.brands = brands;
       },

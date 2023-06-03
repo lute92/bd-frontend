@@ -1,0 +1,76 @@
+<div class="container m-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h2>Brands</h2>
+        </div>
+        <div class="card-body">
+          <div class="col text-end">
+            <button class="btn btn-primary mb-3" (click)="openCreateBrandModal()">
+              <i class="fas fa-plus mr-2"></i><span> Add New </span></button>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Brand Name" [(ngModel)]="searchNameVal"
+                  (keyup.enter)="getAllBrands()">
+              </div>
+            </div>
+            <div class="col">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Description" [(ngModel)]="searchDescVal"
+                  (keyup.enter)="getAllBrands()">
+              </div>
+            </div>
+
+          </div>
+          <div *ngIf="brands.length > 0; else noDataMessage" class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let brand of brands">
+                  <td>{{ brand.name }}</td>
+                  <td>{{ brand.description }}</td>
+                  <td>
+                    <button class="btn btn-info btn-sm m-2" (click)="editBrand(brand)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger" (click)="deleteBrand(brand)"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #noDataMessage>
+            <div class="alert alert-info">No data available.</div>
+          </ng-template>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pagination d-flex justify-content-center align-items-center mt-4">
+    <button class="btn btn-primary mr-2" [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)">Previous</button>
+    <span class="current-page mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
+    <button class="btn btn-primary ml-2" [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)">Next</button>
+  </div>
+</div>
+
+<app-confirm-alert [item]="confirmationBrand" (confirm)="deleteConfirmedBrand()"
+  [message]="'Are you sure to remove this brand?'" (close)="closeConfirmationModal()"></app-confirm-alert>

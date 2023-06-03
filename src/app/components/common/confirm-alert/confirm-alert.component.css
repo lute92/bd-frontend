@@ -1,0 +1,26 @@
+.alert-box {
+    color: #0c302d;
+    font-size: 1.3em;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    /* Ensure the modal covers the entire viewport height */
+    
+    
+}
+
+.alert-box .modal-header {
+    background-color: #3388ef;
+    /* Update with your desired header background color */
+    color: #f0f0f0;
+    /* Update with your desired header text color */
+}
+.alert-box .modal-body{
+    background-color: rgb(232, 245, 245);
+}
+
+.alert-box .modal-footer{
+    background-color: rgb(232, 245, 245);
+}
