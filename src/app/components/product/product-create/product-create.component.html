@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Add Product</h4>
-  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -35,9 +35,9 @@
     </div>
 
     <div class="form-group">
-      <label for="price">Selling Price</label>
-      <input type="number" class="form-control" id="price" formControlName="price">
-      <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-danger">
+      <label for="sellingPrice">Selling Price</label>
+      <input type="number" class="form-control" id="sellingPrice" formControlName="sellingPrice">
+      <div *ngIf="productForm.get('sellingPrice')?.invalid && productForm.get('sellingPrice')?.touched" class="text-danger">
         Selling Price is required and must be a positive number.
       </div>
     </div>
@@ -56,7 +56,7 @@
 
     <div class="modal-footer">
       <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Save</button>
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
     </div>
   </form>
 </div>

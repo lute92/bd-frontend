@@ -12,21 +12,20 @@ export class BrandService {
   constructor(private http: HttpClient) { }
 
 
-  getBrands(page?: number, limit?: number, brandName:string = "", description:string = ""): Observable<IBrand[]> {
-    if(page && limit){
-      const params = new HttpParams()
+  getBrands(page: number = 1, limit: number = 10, brandName?: string, description?: string): Observable<any> {
+    let params = new HttpParams()
       .set('page', page.toString())
-      .set('limit', limit.toString())
-      .set('name', brandName)
-      .set('description', description);
-
-      return this.http.get<any>(this.apiUrl, { params });
+      .set('limit', limit.toString());
+  
+    if (brandName) {
+      params = params.set('name', brandName);
     }
-    else{
-      return this.http.get<any>(this.apiUrl);
+  
+    if (description) {
+      params = params.set('description', description);
     }
-    
-   
+  
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
   getBrandById(brandId: string): Observable<IBrand> {

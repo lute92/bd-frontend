@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product.service';
 import { IProductResponse } from '../../../models/response/IProductResponset';
-import { HttpClient } from '@angular/common/http';
 import { ICategory } from 'src/app/models/category';
 import { IBrand } from 'src/app/models/brand';
 import { CategoryService } from 'src/app/services/category.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { Router } from '@angular/router';
 import { ProductCreateComponent } from '../product-create/product-create.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-list',
@@ -44,21 +43,21 @@ export class ProductListComponent implements OnInit {
 
   loadCategories(): void {
     this.categoryService.getCategories().subscribe(
-      (categories) => {
-        this.categories = categories;
+      (res) => {
+        this.categories = res.data;
       },
-      (error) => {
+      (error:any) => {
         console.error(error);
       }
     );
   }
 
   loadBrands(): void {
-    this.brandService.getBrands(0,0).subscribe(
-      (brands) => {
-        this.brands = brands;
+    this.brandService.getBrands().subscribe(
+      (res) => {
+        this.brands = res.data;
       },
-      (error) => {
+      (error:any) => {
         console.error(error);
       }
     );
@@ -107,14 +106,9 @@ export class ProductListComponent implements OnInit {
   }
 
   openProductCreateModal(): void {
-    const modalRef = this.modalService.open(ProductCreateComponent);
-    modalRef.result.then(
-      (result) => {
-        if (result === 'success') {
-          this.getALLProducts();
-        }
-      },
-      () => {}
-    );
+    const modalRef: NgbModalRef = this.modalService.open(ProductCreateComponent);
+    modalRef.componentInstance.productCreated.subscribe((createdProduct: IProductResponse) => {
+      this.getALLProducts();
+    });
   }
 }

@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 import { BrandListComponent } from './components/brand/brand-list/brand-list.component';
 import { ConfirmAlertComponent } from './components/common/confirm-alert/confirm-alert.component';
 import { BrandCreateComponent } from './components/brand/brand-create/brand-create.component';
+import { CategoryListComponent } from './components/category/category-list/category-list.component';
+import { CategoryCreateComponent } from './components/category/category-create/category-create.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { BrandCreateComponent } from './components/brand/brand-create/brand-crea
     ProductUpdateComponent,
     BrandListComponent,
     ConfirmAlertComponent,
-    BrandCreateComponent
+    BrandCreateComponent,
+    CategoryListComponent,
+    CategoryCreateComponent
   ],
   imports: [
     CommonModule,

@@ -1,9 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { IBrand } from "src/app/models/brand";
 import { ICategory } from "src/app/models/category";
 import { ICurrency } from "src/app/models/currency";
+import { IProductResponse } from "src/app/models/response/IProductResponset";
 import { BrandService } from "src/app/services/brand.service";
 import { CategoryService } from "src/app/services/category.service";
 import { CurrencyService } from "src/app/services/currency.service";
@@ -16,6 +17,8 @@ import { ProductService } from "src/app/services/product.service";
 })
 
 export class ProductCreateComponent implements OnInit {
+  @Output() productCreated: EventEmitter<IProductResponse> = new EventEmitter<IProductResponse>();
+  
   productForm!: FormGroup;
   brands!: IBrand[];
   currencies!: ICurrency[];
@@ -26,7 +29,7 @@ export class ProductCreateComponent implements OnInit {
     private brandService: BrandService,
     private currencyService: CurrencyService,
     private categoryService: CategoryService,
-    public modal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private formBuilder: FormBuilder
   ) { }
 
@@ -42,14 +45,14 @@ export class ProductCreateComponent implements OnInit {
       productName: ['', Validators.required],
       description: ['', Validators.required],
       brand: ['', Validators.required],
-      price: ['', [Validators.required, Validators.min(0)]],
+      sellingPrice: ['', [Validators.required, Validators.min(0)]],
       category: ['', Validators.required]
     });
   }
 
   getBrands(): void {
-    this.brandService.getBrands().subscribe(brands => {
-      this.brands = brands;
+    this.brandService.getBrands().subscribe(res => {
+      this.brands = res.data;
     });
   }
 
@@ -60,8 +63,8 @@ export class ProductCreateComponent implements OnInit {
   }
 
   getCategories(): void {
-    this.categoryService.getCategories().subscribe(categories => {
-      this.categories = categories;
+    this.categoryService.getCategories().subscribe(res => {
+      this.categories = res.data;
     });
   }
 
@@ -83,8 +86,10 @@ export class ProductCreateComponent implements OnInit {
   
     this.productService.createProduct(product)
       .subscribe(
-        response => {
-          console.log('Product created successfully:', response);
+        (createdProduct: IProductResponse) => {
+          console.log('Product created successfully:', createdProduct);
+          this.productCreated.emit(createdProduct);
+        this.closeModal();
           // Reset the form after successful creation
           this.productForm.reset();
         },
@@ -92,6 +97,10 @@ export class ProductCreateComponent implements OnInit {
           console.error('Failed to create product:', error);
         }
       );
+      
   }
-  
+  closeModal() {
+    this.activeModal.close();
+  }
 }
+
