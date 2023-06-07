@@ -1,7 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpRequest } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { Observable, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-root',

@@ -80,6 +80,7 @@ export class CurrencyListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('Currency form closed');
+      this.getAllCurrencies();
     });
   }
 

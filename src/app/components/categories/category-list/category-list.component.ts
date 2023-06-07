@@ -80,6 +80,7 @@ export class CategoryListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('Category form closed');
+      this.getAllCategories();
     });
   }
 

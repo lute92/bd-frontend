@@ -19,6 +19,14 @@ import { CategoryListComponent } from './components/categories/category-list/cat
 import { ConfirmationDialogComponent } from './components/shared/confirmation/confirmation.component';
 import { CurrencyCreateComponent } from './components/currency/currency-create/currency-create.component';
 import { CurrencyListComponent } from './components/currency/currency-list/currency-list.component';
+import { ProductListComponent } from './components/products/product-list/product-list.component';
+import { ProductCreateComponent } from './components/products/product-create/product-create.component';
+
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -30,10 +38,16 @@ import { CurrencyListComponent } from './components/currency/currency-list/curre
     CurrencyListComponent,
     CurrencyCreateComponent,
     LoaderComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    ProductListComponent,
+    ProductCreateComponent
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFirestoreModule,
+    AngularFireStorageModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,

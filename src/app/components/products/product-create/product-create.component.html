@@ -1,0 +1,70 @@
+<h1 mat-dialog-title>Create Product</h1>
+<div mat-dialog-content>
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Product name</mat-label>
+      <input matInput placeholder="Product Name" formControlName="productName">
+      <mat-error *ngIf="productForm.get('productName')?.invalid && productForm.get('productName')?.touched">
+        Product name is required.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput placeholder="Description" formControlName="description"></textarea>
+      <mat-error *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
+        Description is required.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Selling Price</mat-label>
+      <input matInput type="number" placeholder="Selling Price" formControlName="sellingPrice">
+      <mat-error *ngIf="productForm.get('sellingPrice')?.invalid && productForm.get('sellingPrice')?.touched">
+        Selling Price is required.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category">{{ category.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched">
+        Category is required.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Brand</mat-label>
+      <mat-select formControlName="brand">
+        <mat-option *ngFor="let brand of brands" [value]="brand">{{ brand.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="productForm.get('brand')?.invalid && productForm.get('brand')?.touched">
+        Brand is required.
+      </mat-error>
+    </mat-form-field>
+    <div class="m-3">
+      <div class="m-2">
+        <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*">
+      </div>
+
+      <div class="file-preview-container">
+        <div *ngFor="let preview of filePreviews; let i = index" class="file-preview">
+          <img [src]="preview" class="file-preview-thumbnail" (click)="showImage(preview)">
+          <button mat-icon-button (click)="removeImage(i)">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #imageDialog let-data>
+      <img [src]="data" class="full-size-image">
+    </ng-template>
+
+
+
+
+    <mat-dialog-actions align="end">
+      <button mat-button type="button" (click)="cancel()">Cancel</button>
+      <button mat-button type="submit" [disabled]="productForm.invalid">Create</button>
+    </mat-dialog-actions>
+  </form>
+</div>

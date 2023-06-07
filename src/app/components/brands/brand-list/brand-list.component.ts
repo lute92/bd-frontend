@@ -118,6 +118,7 @@ export class BrandListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('Brand form closed');
+      this.getAllBrands();
     });
   }
 
