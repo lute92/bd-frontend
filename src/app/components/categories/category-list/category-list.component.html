@@ -1,0 +1,96 @@
+<div class="container m-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Categories</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="col text-end">
+                        <button mat-raised-button color="primary" class="mb-3" (click)="openCategoryForm()">
+                            <mat-icon class="mr-2">add</mat-icon>Add New
+                        </button>
+                    </div>
+                    <mat-divider class="mb-2"></mat-divider>
+                    <div class="row">
+                        <div class="col">
+                            <mat-form-field style="width:100%">
+                                <mat-label>Search by name</mat-label>
+                                <mat-icon matPrefix>search</mat-icon>
+                                <input matInput placeholder="Category Name" [(ngModel)]="searchNameVal"
+                                    (keyup.enter)="getAllCategories()">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col">
+                            <mat-form-field style="width:100%">
+                                <mat-label>Search by description</mat-label>
+                                <mat-icon matPrefix>search</mat-icon>
+                                <input matInput placeholder="Description" [(ngModel)]="searchDescVal"
+                                    (keyup.enter)="getAllCategories()">
+                            </mat-form-field>
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="row mb-3">
+                        <table mat-table [dataSource]="categories" class="mat-elevation-z8">
+                            <ng-container matColumnDef="rowNumber">
+                                <th mat-header-cell *matHeaderCellDef>#</th>
+                                <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef>Name</th>
+                                <td mat-cell *matCellDef="let category">{{ category.name }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="description">
+                                <th mat-header-cell *matHeaderCellDef>Description</th>
+                                <td mat-cell *matCellDef="let category">{{ category.description }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                                <td mat-cell *matCellDef="let category">
+
+                                    <button mat-button
+                                        [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item>View Stocks</button>
+                                        <button mat-menu-item>Edit</button>
+                                        <button mat-menu-item (click)="openDeleteConfirmationDialog(category)">Delete</button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="['rowNumber','name', 'description', 'actions']"></tr>
+                            <tr mat-row *matRowDef="let category; columns: ['rowNumber','name', 'description', 'actions']">
+                            </tr>
+                        </table>
+                    </div>
+
+                    <ng-template #noDataMessage>
+                        <div class="alert alert-info">No data available.</div>
+                    </ng-template>
+                </mat-card-content>
+                <div class="pagination d-flex justify-content-center align-items-center mt-3 mb-2">
+                    <button mat-raised-button color="primary" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                        Previous
+                    </button>
+                    <span class="current-page mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
+                    <button mat-raised-button color="primary" [disabled]="currentPage === totalPages"
+                        (click)="goToPage(currentPage + 1)">
+                        Next
+                    </button>
+                </div>
+            </mat-card>
+        </div>
+
+        
+    </div>
+
+    
+</div>
+
+<!--   <app-confirm-alert [item]="confirmationBrand" (confirm)="deleteConfirmedBrand()"
+    [message]="'Are you sure to remove this brand?'" (close)="closeConfirmationModal()"></app-confirm-alert> -->
