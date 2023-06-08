@@ -1,5 +1,6 @@
 import { IBrand } from "../brand";
 import { ICategory } from "../category";
+import { IProductImage } from "../product-image";
 
 
 export interface IProductRes {
@@ -10,4 +11,5 @@ export interface IProductRes {
     category: ICategory;
     brand: IBrand;
     totalQuantity?: Number ;
+    images: IProductImage[];
 }

@@ -1,7 +1,7 @@
 import { IProductRes } from "./response/IProductRes";
 
 export interface IProductImage {
-    productImageId: string;
-    product: IProductRes;
+    _id: string;
+    product: string;
     url: string;
 }

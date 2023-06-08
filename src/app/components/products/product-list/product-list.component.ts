@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { ProductCreateComponent } from '../product-create/product-create.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-product-list',
@@ -17,7 +18,7 @@ import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmat
 })
 export class ProductListComponent implements OnInit {
 
-  displayedColumns: string[] = ['productName', 'description', 'sellingPrice', 'category', 'brand', 'actions'];
+  displayedColumns: string[] = ['image','productName', 'description','category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'];
   
   currentPage = 1;
   totalPages = 1;
@@ -89,6 +90,7 @@ export class ProductListComponent implements OnInit {
       );
   }
 
+
   getALLProducts(): void {
     this.productService.getProducts(this.currentPage, this.recordLimitParPage).subscribe(
       (res: any) => {
@@ -101,6 +103,7 @@ export class ProductListComponent implements OnInit {
     );
   }
 
+  
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;

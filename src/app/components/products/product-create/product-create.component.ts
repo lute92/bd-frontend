@@ -10,6 +10,7 @@ import { IProductRes } from '../../../models/response/IProductRes';
 import { IProductCreateReq } from 'src/app/models/request/IProductCreateReq';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Observable, finalize, forkJoin } from 'rxjs';
+import { IProductImage } from 'src/app/models/product-image';
 
 @Component({
     selector: 'app-product-create',
@@ -31,6 +32,8 @@ export class ProductCreateComponent {
 
     selectedFiles: File[] = [];
     filePreviews: any[] = [];
+    downloadUrls!: string[];
+
 
     constructor(
         private formBuilder: FormBuilder,
@@ -38,8 +41,8 @@ export class ProductCreateComponent {
         private brandService: BrandService,
         private categoryService: CategoryService,
         public dialogRef: MatDialogRef<ProductCreateComponent>,
-        private storage: AngularFireStorage,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private storage: AngularFireStorage
     ) {
         this.productForm = this.formBuilder.group({
             productName: ['', Validators.required],
@@ -59,14 +62,11 @@ export class ProductCreateComponent {
             const product: IProductCreateReq = this.productForm.value;
             // Perform save or update operation using the brand data
 
-            this.uploadFiles().subscribe((res)=> {
-                console.log(res);
+            this.uploadFiles().subscribe((urls) => {
+
+                this.createProduct(urls);
+
             })
-/* 
-            this.createProduct();
-            console.log(product);
-            this.productForm.reset();
-            this.dialogRef.close(); */
         }
     }
 
@@ -87,7 +87,8 @@ export class ProductCreateComponent {
         this.dialogRef.close();
     }
 
-    createProduct(): void {
+    createProduct(downloadUrls: string[]): void {
+
         console.log("Creating product")
         if (this.productForm.invalid) {
             return;
@@ -101,20 +102,25 @@ export class ProductCreateComponent {
             brand: brand.brandId || null,
             sellingPrice,
             category: category.categoryId || null,
-            images: []
+            imageUrls: downloadUrls
         };
 
         this.productService.createProduct(product)
             .subscribe(
                 (createdProduct: IProductRes) => {
                     console.log('Product created successfully:', createdProduct);
+
                     this.productCreated.emit(createdProduct);
                     this.productForm.reset();
                     this.dialogRef.close();
 
-
                 },
                 error => {
+                    //To-Do need to refactor the delete image flow on product creation failed
+                    product.imageUrls.forEach((url)=> {
+                        this.deleteFileStorage(url);
+                    })
+
                     console.error('Failed to create product:', error);
                 }
             );
@@ -127,6 +133,7 @@ export class ProductCreateComponent {
     }
 
     onFileSelected(event: any): void {
+        debugger
         this.selectedFiles = event.target.files;
         this.filePreviews = [];
 
@@ -139,11 +146,15 @@ export class ProductCreateComponent {
             reader.readAsDataURL(file);
         }
 
-        this.selectedFiles = this.filePreviews;
+    }
 
+    private deleteFileStorage(name: string): void {
+        const storageRef = this.storage.ref('product-images/');
+        storageRef.child(name).delete();
     }
 
     removeImage(index: number): void {
+        debugger
         this.selectedFiles.splice(index, 1);
 
         // Reset the file input if all images are removed
@@ -162,40 +173,41 @@ export class ProductCreateComponent {
 
     uploadFiles(): Observable<string[]> {
         return new Observable<string[]>(observer => {
-          if (!this.selectedFiles || this.selectedFiles.length === 0) {
-            observer.complete();
-            return;
-          }
-      
-          const uploadObservables: Observable<string>[] = [];
-      
-          for (const file of this.selectedFiles) {
-            const filePath = `product-images/${Date.now()}_${file.name}`;
-            const fileRef = this.storage.ref(filePath);
-            const uploadTask = this.storage.upload(filePath, file);
-      
-            const uploadObservable = new Observable<string>(innerObserver => {
-              uploadTask.snapshotChanges().pipe(
-                finalize(() => {
-                  fileRef.getDownloadURL().subscribe(downloadUrl => {
-                    innerObserver.next(downloadUrl);
-                    innerObserver.complete();
-                  });
-                })
-              ).subscribe();
-            });
-      
-            uploadObservables.push(uploadObservable);
-          }
-      
-          if (uploadObservables.length > 0) {
-            forkJoin(uploadObservables).subscribe((results: string[]) => {
-              observer.next(results);
-              observer.complete();
-            });
-          } else {
-            observer.complete();
-          }
+            if (!this.selectedFiles || this.selectedFiles.length === 0) {
+                observer.complete();
+                return;
+            }
+
+            const uploadObservables: Observable<string>[] = [];
+
+            for (const file of this.selectedFiles) {
+                //debugger
+                const filePath = `product-images/${file.name}`;
+                const fileRef = this.storage.ref(filePath);
+                const uploadTask = this.storage.upload(filePath, file);
+
+                const uploadObservable = new Observable<string>(innerObserver => {
+                    uploadTask.snapshotChanges().pipe(
+                        finalize(() => {
+                            fileRef.getDownloadURL().subscribe(downloadUrl => {
+                                innerObserver.next(downloadUrl);
+                                innerObserver.complete();
+                            });
+                        })
+                    ).subscribe();
+                });
+
+                uploadObservables.push(uploadObservable);
+            }
+
+            if (uploadObservables.length > 0) {
+                forkJoin(uploadObservables).subscribe((results: string[]) => {
+                    observer.next(results);
+                    observer.complete();
+                });
+            } else {
+                observer.complete();
+            }
         });
-      }
+    }
 }
