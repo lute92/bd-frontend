@@ -11,6 +11,7 @@ import { IProductCreateReq } from 'src/app/models/request/IProductCreateReq';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Observable, finalize, forkJoin } from 'rxjs';
 import { IProductImage } from 'src/app/models/product-image';
+import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
 
 @Component({
     selector: 'app-product-create',
@@ -30,7 +31,7 @@ export class ProductCreateComponent {
     brands!: IBrand[];
     categories!: ICategory[];
 
-    selectedFiles: File[] = [];
+    selectedFiles: any[] = [];
     filePreviews: any[] = [];
     downloadUrls!: string[];
 
@@ -42,7 +43,7 @@ export class ProductCreateComponent {
         private categoryService: CategoryService,
         public dialogRef: MatDialogRef<ProductCreateComponent>,
         public dialog: MatDialog,
-        private storage: AngularFireStorage
+        private storage: AngularFireStorage,
     ) {
         this.productForm = this.formBuilder.group({
             productName: ['', Validators.required],
@@ -69,6 +70,13 @@ export class ProductCreateComponent {
             })
         }
     }
+
+    openAlertDialog(message:string, title:string) {
+        const dialogRef: MatDialogRef<any> = this.dialog.open(AlertDialogComponent, {
+          width: '300px',
+          data: { message: message, title: title }
+        });
+      }
 
     getBrands(): void {
         this.brandService.getBrands().subscribe(res => {
@@ -117,10 +125,11 @@ export class ProductCreateComponent {
                 },
                 error => {
                     //To-Do need to refactor the delete image flow on product creation failed
-                    product.imageUrls.forEach((url)=> {
-                        this.deleteFileStorage(url);
+                    this.selectedFiles.forEach((file) => {
+                        this.deleteFileStorage(file.name);
                     })
-
+                    //debugger
+                    this.openAlertDialog(error.error.message,"Failed")
                     console.error('Failed to create product:', error);
                 }
             );
@@ -133,8 +142,8 @@ export class ProductCreateComponent {
     }
 
     onFileSelected(event: any): void {
-        debugger
-        this.selectedFiles = event.target.files;
+        //debugger
+        this.selectedFiles = Array.from(event.target.files);
         this.filePreviews = [];
 
         // Generate file previews
@@ -149,13 +158,15 @@ export class ProductCreateComponent {
     }
 
     private deleteFileStorage(name: string): void {
+        //debugger
         const storageRef = this.storage.ref('product-images/');
         storageRef.child(name).delete();
     }
 
     removeImage(index: number): void {
-        debugger
+        //debugger
         this.selectedFiles.splice(index, 1);
+        this.filePreviews.splice(index,1)
 
         // Reset the file input if all images are removed
         if (this.selectedFiles.length === 0) {

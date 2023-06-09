@@ -1,0 +1,52 @@
+<h1 mat-dialog-title>Adding Items</h1>
+<mat-dialog-content>
+  <form [formGroup]="purchaseDetailForm">
+
+    <mat-form-field>
+      <mat-label>Product</mat-label>
+      <mat-select formControlName="product">
+        <mat-option *ngFor="let product of products" [value]="product">{{ product.productName }}</mat-option>
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Quantity</mat-label>
+      <input matInput formControlName="quantity" placeholder="Quantity" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Purchase Price</mat-label>
+      <input matInput formControlName="purchasePrice" placeholder="Purchase Price" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Item Cost</mat-label>
+      <input matInput formControlName="itemCost" placeholder="Item Cost" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Expire Date</mat-label>
+      <input matInput [matDatepicker]="expDate" placeholder="Expiration Date" readonly formControlName="expDate" 
+        required>
+      <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
+      <mat-datepicker #expDate></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+
+      <mat-label>Manufacturing Date</mat-label>
+      <input matInput [matDatepicker]="mnuDate" placeholder="Expiration Date" readonly formControlName="mnuDate" 
+        required>
+      <mat-datepicker-toggle matSuffix [for]="mnuDate"></mat-datepicker-toggle>
+      <mat-datepicker #mnuDate></mat-datepicker>
+
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onAddClick()" [mat-dialog-close]="purchaseDetailForm.value"
+    [disabled]="purchaseDetailForm.invalid">Add</button>
+  <button mat-button (click)="onCancelClick()">Cancel</button>
+</mat-dialog-actions>

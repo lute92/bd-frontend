@@ -27,6 +27,11 @@ import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { environment } from '../environments/environment';
+import { AlertDialogComponent } from './components/shared/alert/alert-dialog.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PurchaseDetailDialogComponent } from './components/purchase/purchase-detail/purchase-detail-dialog.component';
+import { PurchaseCreateComponent } from './components/purchase/purchase-create/purchase-create.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +45,10 @@ import { environment } from '../environments/environment';
     LoaderComponent,
     ConfirmationDialogComponent,
     ProductListComponent,
-    ProductCreateComponent
+    ProductCreateComponent,
+    AlertDialogComponent,
+    PurchaseDetailDialogComponent,
+    PurchaseCreateComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +63,8 @@ import { environment } from '../environments/environment';
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    AngularEditorModule
+    AngularEditorModule,
+    MatNativeDateModule 
   ],
   providers: [
     {
@@ -63,7 +72,8 @@ import { environment } from '../environments/environment';
       useClass: LoaderInterceptor,
       multi: true
     },
-    MatProgressBar
+    MatProgressBar,
+    MatDatepickerModule
   ],
   bootstrap: [AppComponent]
 })

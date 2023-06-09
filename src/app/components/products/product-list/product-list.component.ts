@@ -22,7 +22,7 @@ export class ProductListComponent implements OnInit {
   
   currentPage = 1;
   totalPages = 1;
-  recordLimitParPage = 10;
+  recordLimitParPage = 4;
 
   productName: string = "";
   categoryId: string = "";
