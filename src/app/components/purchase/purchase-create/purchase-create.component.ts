@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { IPurchaseDetail } from 'src/app/models/purchase-details';
 import { PurchaseDetailDialogComponent } from '../purchase-detail/purchase-detail-dialog.component';
@@ -7,6 +7,9 @@ import { MatTable } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ICurrency } from 'src/app/models/currency';
 import { CurrencyService } from 'src/app/services/currency.service';
+import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
+import { IPurchase } from 'src/app/models/purchase';
+import { PurchaseService } from 'src/app/services/purchase.service';
 
 @Component({
   selector: 'app-purchase-create',
@@ -31,12 +34,17 @@ export class PurchaseCreateComponent implements OnInit {
     'delete'
   ];
 
-  constructor(private dialog: MatDialog, private formBuilder: FormBuilder, private currencyService: CurrencyService) {
+  constructor(
+    private dialog: MatDialog,
+    private formBuilder: FormBuilder,
+    private currencyService: CurrencyService,
+    private purchaseService: PurchaseService) {
 
     this.purchaseCreateForm = this.formBuilder.group({
       purchaseDate: ['', Validators.required],
       currency: ['', Validators.required],
       exchangeRate: [''],
+      extraCost: [''],
       note: [''],
     });
   }
@@ -51,8 +59,51 @@ export class PurchaseCreateComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
+    this.createPurchase();
+  }
 
+  createPurchase() {
+
+    if (this.purchaseCreateForm.invalid) {
+      return;
+    }
+
+    const { purchaseDate, currency, exchangeRate, extraCost, note } = this.purchaseCreateForm.value;
+
+    const purchase: IPurchase = {
+      purchaseId: "",
+      purchaseDate: purchaseDate,
+      currency: currency,
+      exchangeRate: exchangeRate,
+      extraCost: extraCost,
+      note: note,
+      purchaseDetails: this.purchaseDetails
+    };
+
+    this.purchaseService.createPurchase(purchase)
+      .subscribe(
+        (createdPurchase: IPurchase) => {
+          console.log('Purchase created successfully:', createdPurchase);
+          this.openAlertDialog("Purchase order created.", "Success.")
+          this.purchaseCreateForm.reset();
+          this.purchaseDetails = [];
+          this.table.renderRows();
+        },
+        error => {
+
+          //debugger
+          this.openAlertDialog(error.error.message, "Failed")
+          console.error('Failed to create product:', error);
+        }
+      );
+  }
+
+  openAlertDialog(message: string, title: string) {
+    const dialogRef: MatDialogRef<any> = this.dialog.open(AlertDialogComponent, {
+      width: '300px',
+      data: { message: message, title: title }
+    });
   }
 
   openPurchaseDetailDialog() {
@@ -61,11 +112,20 @@ export class PurchaseCreateComponent implements OnInit {
     });
 
 
-    dialogRef.afterClosed().subscribe((result: IPurchaseDetail) => {
+    dialogRef.afterClosed().subscribe((newItem: IPurchaseDetail) => {
       debugger
-      if (result) {
-        this.purchaseDetails.push(result);
-        this.table.renderRows();
+      if (newItem) {
+        let result = this.purchaseDetails.find((purchase) => {
+          return purchase.product.productId === newItem.product.productId;
+        })
+
+        if (!result) {
+          this.purchaseDetails.push(newItem);
+          this.table.renderRows();
+        }
+        else {
+          this.openAlertDialog("Same item already exist in Item List.", "Duplicate Product!")
+        }
       }
     });
   }

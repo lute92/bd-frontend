@@ -2,104 +2,143 @@
   <div class="row justify-content-center">
     <div class="col-md-10">
       <mat-card>
-        <mat-card-header>
+        <mat-card-header class="mb-3">
           <mat-card-title>Create Purchase</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <form [formGroup]="purchaseCreateForm" (ngSubmit)="onSubmit()">
-          <div class="row mt-3 mb-3">
-            <mat-form-field class="col-md-4">
-              <mat-label>Purchase Date</mat-label>
-              <input matInput type="text" placeholder="Purchase Date" formControlName="purchaseDate">
-              <mat-error *ngIf="purchaseCreateForm.get('purchaseDate')?.invalid && purchaseCreateForm.get('purchaseDate')?.touched">
-                Purchase date is required.
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field class="col-md-4">
-              <mat-label>Exchange Rate</mat-label>
-              <input matInput type="number" placeholder="Exchange Rate" formControlName="exchangeRate">
-              <mat-error *ngIf="purchaseCreateForm.get('exchangeRate')?.invalid && purchaseCreateForm.get('exchangeRate')?.touched">
-                Purchase date is required.
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field class="col-md-4">
-              <mat-label>Purchase Currency</mat-label>
-              <mat-select formControlName="currency">
-                <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency.name }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="purchaseCreateForm.get('currency')?.invalid && purchaseCreateForm.get('currency')?.touched">
-                Currency is required.
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <mat-divider class="mb-2"></mat-divider>
-          <div class="row">
-            <div class="col-md-3 text-start">
-              <h2>Item List</h2>
-            </div>
-            <div class="col text-end">
-              <button mat-raised-button color="primary" class="mb-3" (click)="openPurchaseDetailDialog()">
-                <mat-icon class="mr-2">add</mat-icon>Add Item
-              </button>
-            </div>
-          </div>
-          
-          <mat-divider class="mb-2"></mat-divider>
-          <div class="row mt-3 mb-3">
-            <table mat-table [dataSource]="purchaseDetails" class="mat-elevation-z8">
-              <ng-container matColumnDef="product">
-                <th mat-header-cell *matHeaderCellDef>Product</th>
-                <td mat-cell *matCellDef="let purchaseDetail">
-                  {{ purchaseDetail.product }}
-                </td>
-              </ng-container>
-
-              <!-- Define the columns -->
-              <ng-container matColumnDef="quantity">
-                <th mat-header-cell *matHeaderCellDef>Qty</th>
-                <td mat-cell *matCellDef="let productDetail">{{ productDetail.quantity }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="purchasePrice">
-                <th mat-header-cell *matHeaderCellDef>Purchase Price</th>
-                <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.purchasePrice }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="itemCost">
-                <th mat-header-cell *matHeaderCellDef>Item Cost</th>
-                <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.itemCost }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="expDate">
-                <th mat-header-cell *matHeaderCellDef>Exp Date</th>
-                <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.expDate }}</td>
-              </ng-container>
-              <ng-container matColumnDef="mnuDate">
-                <th mat-header-cell *matHeaderCellDef>Mnu Date</th>
-                <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.mnuDate }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef>Description</th>
-                <td mat-cell *matCellDef="let product">{{ product.description }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="delete">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let purchaseDetail; let i = index">
-                  <button mat-icon-button (click)="removePurchaseDetail(i)">
-                    <mat-icon>delete</mat-icon>
+          <mat-card>
+            <form [formGroup]="purchaseCreateForm" (ngSubmit)="onSubmit()" class="m-2">
+              <div class="row">
+                <div class="col text-start">
+                  <h3>Fill order information</h3>
+                </div>
+                <div class="col text-end">
+                  <button mat-raised-button color="primary" type="submit" [disabled]="purchaseCreateForm.invalid">
+                    Create
                   </button>
-                </td>
-              </ng-container>
+                </div>
+              </div>
 
-              <!-- Render the columns -->
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-          </div>
-        </form>
+              <div class="row mt-3 mb-3">
+                <mat-form-field class="col">
+                  <mat-label>Purchase Date</mat-label>
+                  <input matInput [matDatepicker]="purchaseDate" placeholder="Purchase Date" readonly
+                    formControlName="purchaseDate" required>
+                  <mat-datepicker-toggle matSuffix [for]="purchaseDate"></mat-datepicker-toggle>
+                  <mat-datepicker #purchaseDate></mat-datepicker>
+                  <mat-error
+                    *ngIf="purchaseCreateForm.get('purchaseDate')?.invalid && purchaseCreateForm.get('purchaseDate')?.touched">
+                    Purchase date is required.
+                  </mat-error>
+
+                </mat-form-field>
+                <mat-form-field class="col">
+                  <mat-label>Purchase Currency</mat-label>
+                  <mat-select formControlName="currency">
+                    <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency.name }}</mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="purchaseCreateForm.get('currency')?.invalid && purchaseCreateForm.get('currency')?.touched">
+                    Currency is required.
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field class="col">
+                  <mat-label>Exchange Rate</mat-label>
+                  <input matInput type="number" placeholder="Exchange Rate" formControlName="exchangeRate">
+                  <mat-error
+                    *ngIf="purchaseCreateForm.get('exchangeRate')?.invalid && purchaseCreateForm.get('exchangeRate')?.touched">
+                    Exchange rate is required.
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col">
+                  <mat-label>Extra Cost</mat-label>
+                  <input matInput type="number" placeholder="Extra Cost" formControlName="extraCost">
+
+                </mat-form-field>
+
+              </div>
+              <div class="row mb-4">
+                <mat-form-field class="col">
+                  <mat-label>Note</mat-label>
+                  <input matInput type="text" placeholder="" formControlName="note">
+
+                </mat-form-field>
+              </div>
+
+              <mat-divider class="mb-2"></mat-divider>
+              <div class="row">
+                <div class="col-md-3 text-start">
+                  <h2>Item List</h2>
+                </div>
+                <div class="col text-end">
+                  <button mat-raised-button color="primary" class="mb-3" type="button"
+                    (click)="openPurchaseDetailDialog()">
+                    <mat-icon class="mr-2">add</mat-icon>Add Item
+                  </button>
+                </div>
+              </div>
+
+              <mat-divider class="mb-2"></mat-divider>
+              <div class="row m-2">
+                <table mat-table [dataSource]="purchaseDetails" class="mat-elevation-z8">
+                  <ng-container matColumnDef="product">
+                    <th mat-header-cell *matHeaderCellDef>Product</th>
+                    <td mat-cell *matCellDef="let purchaseDetail">
+                      {{ purchaseDetail.product.productName }}
+                    </td>
+                  </ng-container>
+
+                  <!-- Define the columns -->
+                  <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef>Qty</th>
+                    <td mat-cell *matCellDef="let productDetail">{{ productDetail.quantity }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="purchasePrice">
+                    <th mat-header-cell *matHeaderCellDef>Purchase Price</th>
+                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.purchasePrice }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="itemCost">
+                    <th mat-header-cell *matHeaderCellDef>Item Cost</th>
+                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.itemCost }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="expDate">
+                    <th mat-header-cell *matHeaderCellDef>Exp Date</th>
+                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.expDate }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="mnuDate">
+                    <th mat-header-cell *matHeaderCellDef>Mnu Date</th>
+                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.mnuDate }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let product">{{ product.description }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="delete">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let purchaseDetail; let i = index">
+                      <button mat-icon-button (click)="removePurchaseDetail(i)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <!-- Render the columns -->
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                
+              </div>
+            </form>
+            <ng-template *ngIf="purchaseDetails?.length === 0">
+              <div class="alert alert-info">No data available.</div>
+            </ng-template>
+          </mat-card>
         </mat-card-content>
 
       </mat-card>

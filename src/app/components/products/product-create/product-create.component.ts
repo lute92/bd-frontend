@@ -88,9 +88,9 @@ export class ProductCreateComponent {
         }
         // filter the banks
         this.filteredCategories.next(
-            this.categories.filter(bank => {
+            this.categories.filter(category => {
                 const searchTerm = search ? search.toLowerCase() : '';
-                return bank.name.toLowerCase().indexOf(searchTerm) > -1;
+                return category.name.toLowerCase().indexOf(searchTerm) > -1;
             })
         );
     }
@@ -109,16 +109,16 @@ export class ProductCreateComponent {
         }
         // filter the banks
         this.filteredBrands.next(
-            this.brands.filter(bank => {
+            this.brands.filter(brand => {
                 const searchTerm = search ? search.toLowerCase() : '';
-                return bank.name.toLowerCase().indexOf(searchTerm) > -1;
+                return brand.name.toLowerCase().indexOf(searchTerm) > -1;
             })
         );
     }
 
     openCategoryCreateForm(): void {
         const dialogRef = this.dialog.open(CategoryCreateComponent, {
-            width: '60%',
+            width: '40%',
             disableClose: true
         });
 
@@ -130,7 +130,7 @@ export class ProductCreateComponent {
 
     openBrandCreateForm(): void {
         const dialogRef = this.dialog.open(BrandCreateComponent, {
-            width: '60%',
+            width: '40%',
             disableClose: true
         });
 
@@ -163,13 +163,14 @@ export class ProductCreateComponent {
     }
 
     getBrands(): void {
-        this.brandService.getBrands().subscribe(res => {
+        this.brandService.getBrands(0,0).subscribe(res => {
+            debugger
             this.brands = res.data;
 
             // set initial selection
             this.productForm.controls['brand'].setValue(this.brands[0]);
 
-            // load the initial bank list
+            // load the initial brand list
             this.filteredBrands.next(this.brands.slice());
 
             // listen for search field value changes
@@ -184,13 +185,14 @@ export class ProductCreateComponent {
 
 
     getCategories(): void {
-        this.categoryService.getCategories().subscribe(res => {
+        this.categoryService.getCategories(0,0).subscribe(res => {
+            debugger
             this.categories = res.data;
 
             // set initial selection
             this.productForm.controls['category'].setValue(this.categories[0]);
 
-            // load the initial bank list
+            // load the initial brand list
             this.filteredCategories.next(this.categories.slice());
 
             // listen for search field value changes

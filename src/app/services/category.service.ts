@@ -14,7 +14,7 @@ export class CategoryService {
   constructor(private http: HttpClient) { }
 
 
-  getCategories(page: number = 1, limit: number = 10, categoryName?: string, description?: string): Observable<any> {
+  getCategories(page: number, limit: number, categoryName?: string, description?: string): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());

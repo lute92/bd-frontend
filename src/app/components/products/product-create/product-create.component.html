@@ -18,14 +18,14 @@
       </mat-error>
     </mat-form-field>
 
-    <div class="row m-2">
+    <div class="row">
       <div class="col text-end">
         <button color="primary" mat-button type="button" (click)="openCategoryCreateForm()">Create a category
         </button>
       </div>
     </div>
 
-    <mat-form-field>
+    <div>
       <mat-label>Category</mat-label>
       <mat-form-field>
         <mat-select formControlName="category" placeholder="Categoy" #singleSelect>
@@ -40,16 +40,16 @@
         </mat-select>
 
       </mat-form-field>
-    </mat-form-field>
+    </div>
 
-    <div class="row m-2">
+    <div class="row">
       <div class="col text-end">
         <button color="primary" mat-button type="button" (click)="openBrandCreateForm()">Create a brand
         </button>
       </div>
     </div>
 
-    <mat-form-field>
+    <div>
       <mat-label>Brand</mat-label>
       <mat-form-field>
         <mat-select formControlName="brand" placeholder="Brand" #singleSelect>
@@ -64,7 +64,7 @@
         </mat-select>
 
       </mat-form-field>
-    </mat-form-field>
+    </div>
 
 
     <mat-form-field>

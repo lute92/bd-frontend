@@ -46,7 +46,7 @@ export class ProductListComponent implements OnInit {
 
 
   loadCategories(): void {
-    this.categoryService.getCategories().subscribe(
+    this.categoryService.getCategories(0,0).subscribe(
       (res) => {
         this.categories = res.data;
         if (this.categories?.length) {
@@ -60,7 +60,7 @@ export class ProductListComponent implements OnInit {
   }
 
   loadBrands(): void {
-    this.brandService.getBrands().subscribe(
+    this.brandService.getBrands(0,0).subscribe(
       (res) => {
         this.brands = res.data;
         if (this.brands?.length) {

@@ -8,6 +8,6 @@ export interface IPurchaseDetail extends Document {
     quantity: number,
     purchasePrice: number,
     itemCost: number,
-    expDate: number,
-    mnuDate: number
+    expDate: Date,
+    mnuDate: Date
 }

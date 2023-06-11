@@ -15,7 +15,7 @@ export class BrandService {
   constructor(private http: HttpClient) { }
 
 
-  getBrands(page: number = 1, limit: number = 10, brandName?: string, description?: string): Observable<any> {
+  getBrands(page: number, limit: number, brandName?: string, description?: string): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());
