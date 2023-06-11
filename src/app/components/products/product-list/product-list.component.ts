@@ -18,8 +18,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ProductListComponent implements OnInit {
 
-  displayedColumns: string[] = ['image','productName', 'description','category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'];
-  
+  displayedColumns: string[] = ['image', 'productName', 'description', 'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'];
+
   currentPage = 1;
   totalPages = 1;
   recordLimitParPage = 4;
@@ -49,10 +49,11 @@ export class ProductListComponent implements OnInit {
     this.categoryService.getCategories().subscribe(
       (res) => {
         this.categories = res.data;
-        this.categories.unshift({categoryId:"",name:"All",description:""})
-        
+        if (this.categories?.length) {
+          this.categories.unshift({ categoryId: "", name: "All", description: "" })
+        }
       },
-      (error:any) => {
+      (error: any) => {
         console.error(error);
       }
     );
@@ -62,26 +63,30 @@ export class ProductListComponent implements OnInit {
     this.brandService.getBrands().subscribe(
       (res) => {
         this.brands = res.data;
-        this.brands.unshift({brandId:"",name:"All",description:""})
+        if (this.brands?.length) {
+          this.brands.unshift({ brandId: "", name: "All", description: "" })
+        }
+
       },
-      (error:any) => {
+      (error: any) => {
         console.error(error);
       }
     );
   }
 
   searchProducts(): void {
-    if(this.categoryId == "All"){
+    if (this.categoryId == "All") {
       this.categoryId = ""
     }
 
-    if(this.brandId == "All"){
+    if (this.brandId == "All") {
       this.brandId = "";
     }
 
-    this.productService.searchProducts(this.productName, this.brandId, this.categoryId)
+    this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
+      this.productName, this.brandId, this.categoryId)
       .subscribe(
-        (response:any) => {
+        (response: any) => {
           this.products = response.data;
         },
         (error) => {
@@ -103,7 +108,7 @@ export class ProductListComponent implements OnInit {
     );
   }
 
-  
+
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -125,6 +130,7 @@ export class ProductListComponent implements OnInit {
   openProductForm(): void {
     const dialogRef = this.dialog.open(ProductCreateComponent, {
       width: '60%',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(() => {
@@ -134,7 +140,7 @@ export class ProductListComponent implements OnInit {
   }
 
   openDeleteConfirmationDialog(product: IProductRes): void {
-    
+
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: "Delete Confirmation",

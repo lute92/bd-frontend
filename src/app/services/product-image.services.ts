@@ -7,7 +7,8 @@ import { IProductImage } from '../models/product-image';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:4900/products'; // Replace with your API URL
+  private endPoint = 'productImages';
+  private apiUrl = 'http://localhost:4900'; // Replace with your API URL
 
   constructor(private http: HttpClient) { }
 
@@ -37,7 +38,7 @@ export class ProductService {
   } */
 
   createProductImage(image: IProductImage): Observable<any> {
-    return this.http.post<IProductImage>(`${this.apiUrl}/`, image);
+    return this.http.post<IProductImage>(`${this.apiUrl}/${this.endPoint}`, image);
   }
 
   /* updateProduct(id: string, product: IProductCreateReq): Observable<IProductCreateReq> {

@@ -32,6 +32,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PurchaseDetailDialogComponent } from './components/purchase/purchase-detail/purchase-detail-dialog.component';
 import { PurchaseCreateComponent } from './components/purchase/purchase-create/purchase-create.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { PurchaseCreateComponent } from './components/purchase/purchase-create/p
     ReactiveFormsModule,
     MatFormFieldModule,
     AngularEditorModule,
-    MatNativeDateModule 
+    MatNativeDateModule,
+    NgxMatSelectSearchModule
   ],
   providers: [
     {

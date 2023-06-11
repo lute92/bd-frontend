@@ -1,4 +1,13 @@
-<h1 mat-dialog-title>Create Product</h1>
+<div class="row">
+  <div class="col">
+    <h1 mat-dialog-title>Create Product</h1>
+  </div>
+  <div class="col text-end">
+    <button class="m-2" color="primary" mat-button type="button" (click)="cancel()">Close
+    </button>
+
+  </div>
+</div>
 <div mat-dialog-content>
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
@@ -8,6 +17,56 @@
         Product name is required.
       </mat-error>
     </mat-form-field>
+
+    <div class="row m-2">
+      <div class="col text-end">
+        <button color="primary" mat-button type="button" (click)="openCategoryCreateForm()">Create a category
+        </button>
+      </div>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-form-field>
+        <mat-select formControlName="category" placeholder="Categoy" #singleSelect>
+          <mat-option>
+            <ngx-mat-select-search [formControl]="categoryFilterCtrl" noEntriesFoundLabel="No matching category found."
+              placeholderLabel="Type and search"></ngx-mat-select-search>
+          </mat-option>
+
+          <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+            {{category.name}}
+          </mat-option>
+        </mat-select>
+
+      </mat-form-field>
+    </mat-form-field>
+
+    <div class="row m-2">
+      <div class="col text-end">
+        <button color="primary" mat-button type="button" (click)="openBrandCreateForm()">Create a brand
+        </button>
+      </div>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Brand</mat-label>
+      <mat-form-field>
+        <mat-select formControlName="brand" placeholder="Brand" #singleSelect>
+          <mat-option>
+            <ngx-mat-select-search [formControl]="brandFilterCtrl" noEntriesFoundLabel="No matching brand found."
+              placeholderLabel="Type and search"></ngx-mat-select-search>
+          </mat-option>
+
+          <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
+            {{brand.name}}
+          </mat-option>
+        </mat-select>
+
+      </mat-form-field>
+    </mat-form-field>
+
+
     <mat-form-field>
       <mat-label>Description</mat-label>
       <textarea matInput placeholder="Description" formControlName="description"></textarea>
@@ -15,6 +74,7 @@
         Description is required.
       </mat-error>
     </mat-form-field>
+
     <mat-form-field>
       <mat-label>Selling Price</mat-label>
       <input matInput type="number" placeholder="Selling Price" formControlName="sellingPrice">
@@ -22,26 +82,15 @@
         Selling Price is required.
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
-      <mat-label>Category</mat-label>
-      <mat-select formControlName="category">
-        <mat-option *ngFor="let category of categories" [value]="category">{{ category.name }}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched">
-        Category is required.
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Brand</mat-label>
-      <mat-select formControlName="brand">
-        <mat-option *ngFor="let brand of brands" [value]="brand">{{ brand.name }}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="productForm.get('brand')?.invalid && productForm.get('brand')?.touched">
-        Brand is required.
-      </mat-error>
-    </mat-form-field>
+
+    <mat-divider></mat-divider>
+
+    <div class="row mt-2">
+      <h1>Images</h1>
+    </div>
+
     <div class="m-3">
-      <div class="m-2">
+      <div class="m-2 mb-4">
         <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*">
       </div>
 
@@ -58,9 +107,6 @@
     <ng-template #imageDialog let-data>
       <img [src]="data" class="full-size-image">
     </ng-template>
-
-
-
 
     <mat-dialog-actions align="end">
       <button mat-button type="button" (click)="cancel()">Cancel</button>

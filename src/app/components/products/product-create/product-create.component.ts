@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Inject, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { IBrand } from '../../../models/brand';
 import { ICategory } from '../../../models/category';
@@ -9,9 +9,12 @@ import { CategoryService } from 'src/app/services/category.service';
 import { IProductRes } from '../../../models/response/IProductRes';
 import { IProductCreateReq } from 'src/app/models/request/IProductCreateReq';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Observable, finalize, forkJoin } from 'rxjs';
+import { Observable, ReplaySubject, Subject, finalize, forkJoin, takeUntil } from 'rxjs';
 import { IProductImage } from 'src/app/models/product-image';
 import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
+import { MatSelect } from '@angular/material/select';
+import { CategoryCreateComponent } from '../../categories/category-create/category-create.component';
+import { BrandCreateComponent } from '../../brands/brand-create/brand-create.component';
 
 @Component({
     selector: 'app-product-create',
@@ -36,6 +39,20 @@ export class ProductCreateComponent {
     downloadUrls!: string[];
 
 
+    /** control for the MatSelect filter keyword */
+    public categoryFilterCtrl: FormControl<string | null> = new FormControl<string>('');
+    public brandFilterCtrl: FormControl<string | null> = new FormControl<string>('');
+
+    /** list of categories and brand filtered by search keyword */
+    public filteredCategories: ReplaySubject<ICategory[]> = new ReplaySubject<ICategory[]>(1);
+    public filteredBrands: ReplaySubject<IBrand[]> = new ReplaySubject<IBrand[]>(1);
+
+
+    @ViewChild('singleSelect', { static: true }) singleSelect!: MatSelect;
+
+    /** Subject that emits when the component has been destroyed. */
+    protected _onDestroy = new Subject<void>();
+
     constructor(
         private formBuilder: FormBuilder,
         private productService: ProductService,
@@ -55,8 +72,74 @@ export class ProductCreateComponent {
 
         this.getBrands();
         this.getCategories();
-
     }
+
+    protected filterCategories() {
+        if (!this.categories) {
+            return;
+        }
+        // get the search keyword
+        let search = this.categoryFilterCtrl.value;
+        if (!search) {
+            this.filteredCategories.next(this.categories.slice());
+            return;
+        } else {
+            search = search.toLowerCase();
+        }
+        // filter the banks
+        this.filteredCategories.next(
+            this.categories.filter(bank => {
+                const searchTerm = search ? search.toLowerCase() : '';
+                return bank.name.toLowerCase().indexOf(searchTerm) > -1;
+            })
+        );
+    }
+
+    protected filterBrands() {
+        if (!this.brands) {
+            return;
+        }
+        // get the search keyword
+        let search = this.brandFilterCtrl.value;
+        if (!search) {
+            this.filteredBrands.next(this.brands.slice());
+            return;
+        } else {
+            search = search.toLowerCase();
+        }
+        // filter the banks
+        this.filteredBrands.next(
+            this.brands.filter(bank => {
+                const searchTerm = search ? search.toLowerCase() : '';
+                return bank.name.toLowerCase().indexOf(searchTerm) > -1;
+            })
+        );
+    }
+
+    openCategoryCreateForm(): void {
+        const dialogRef = this.dialog.open(CategoryCreateComponent, {
+            width: '60%',
+            disableClose: true
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            console.log('Category form closed');
+            this.getCategories();
+        });
+    }
+
+    openBrandCreateForm(): void {
+        const dialogRef = this.dialog.open(BrandCreateComponent, {
+            width: '60%',
+            disableClose: true
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            console.log('Brand form closed');
+            this.getBrands();
+        });
+    }
+
 
     onSubmit(): void {
         if (this.productForm.valid) {
@@ -71,16 +154,31 @@ export class ProductCreateComponent {
         }
     }
 
-    openAlertDialog(message:string, title:string) {
+
+    openAlertDialog(message: string, title: string) {
         const dialogRef: MatDialogRef<any> = this.dialog.open(AlertDialogComponent, {
-          width: '300px',
-          data: { message: message, title: title }
+            width: '300px',
+            data: { message: message, title: title }
         });
-      }
+    }
 
     getBrands(): void {
         this.brandService.getBrands().subscribe(res => {
             this.brands = res.data;
+
+            // set initial selection
+            this.productForm.controls['brand'].setValue(this.brands[0]);
+
+            // load the initial bank list
+            this.filteredBrands.next(this.brands.slice());
+
+            // listen for search field value changes
+            this.brandFilterCtrl.valueChanges
+                .pipe(takeUntil(this._onDestroy))
+                .subscribe(() => {
+                    this.filterBrands();
+                });
+
         });
     }
 
@@ -88,6 +186,20 @@ export class ProductCreateComponent {
     getCategories(): void {
         this.categoryService.getCategories().subscribe(res => {
             this.categories = res.data;
+
+            // set initial selection
+            this.productForm.controls['category'].setValue(this.categories[0]);
+
+            // load the initial bank list
+            this.filteredCategories.next(this.categories.slice());
+
+            // listen for search field value changes
+            this.categoryFilterCtrl.valueChanges
+                .pipe(takeUntil(this._onDestroy))
+                .subscribe(() => {
+                    this.filterCategories();
+                });
+
         });
     }
 
@@ -129,7 +241,7 @@ export class ProductCreateComponent {
                         this.deleteFileStorage(file.name);
                     })
                     //debugger
-                    this.openAlertDialog(error.error.message,"Failed")
+                    this.openAlertDialog(error.error.message, "Failed")
                     console.error('Failed to create product:', error);
                 }
             );
@@ -166,7 +278,7 @@ export class ProductCreateComponent {
     removeImage(index: number): void {
         //debugger
         this.selectedFiles.splice(index, 1);
-        this.filePreviews.splice(index,1)
+        this.filePreviews.splice(index, 1)
 
         // Reset the file input if all images are removed
         if (this.selectedFiles.length === 0) {

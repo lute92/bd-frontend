@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ICurrency } from '../models/currency';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CurrencyService {
-  private apiUrl = 'http://localhost:4900/currencies';
+  private endPoint = 'currencies';
+  private apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}`;
 
   constructor(private http: HttpClient) { }
 
@@ -25,25 +27,25 @@ export class CurrencyService {
       params = params.set('description', description);
     }
   
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<any>(`${this.apiUrl}/${this.endPoint}`, { params });
   }
 
   getCurrencyById(currencyId: string): Observable<ICurrency> {
-    const url = `${this.apiUrl}/${currencyId}`;
+    const url = `${this.apiUrl}/${this.endPoint}/${currencyId}`;
     return this.http.get<ICurrency>(url);
   }
 
   createCurrency(currency: ICurrency): Observable<ICurrency> {
-    return this.http.post<ICurrency>(this.apiUrl, currency);
+    return this.http.post<ICurrency>(`${this.apiUrl}/${this.endPoint}`, currency);
   }
 
   updateCurrency(currency: ICurrency): Observable<ICurrency> {
-    const url = `${this.apiUrl}/${currency.currencyId}`;
+    const url = `${this.apiUrl}/${this.endPoint}/${currency.currencyId}`;
     return this.http.put<ICurrency>(url, currency);
   }
 
   deleteCurrency(currencyId: string): Observable<void> {
-    const url = `${this.apiUrl}/${currencyId}`;
+    const url = `${this.apiUrl}/${this.endPoint}/${currencyId}`;
     return this.http.delete<void>(url);
   }
 }
