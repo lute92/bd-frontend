@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IProductCreateReq } from '../models/request/IProductCreateReq';
+import { IProductReq } from '../models/request/IProductReq';
 import { IProductRes } from '../models/response/IProductRes';
 import { environment } from '../../../src/environments/environment';
 
@@ -21,7 +21,7 @@ export class ProductService {
     return this.http.get<any>(`${this.apiUrl}`, {params});
   }
 
-  getProduct(id: string): Observable<IProductRes> {
+  getProduct(id: string | null = ""): Observable<IProductRes> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<IProductRes>(url);
   }
@@ -55,13 +55,13 @@ export class ProductService {
     return this.http.get<any[]>(url);
   }
 
-  createProduct(product: IProductCreateReq): Observable<any> {
-    return this.http.post<IProductCreateReq>(`${this.apiUrl}/`, product);
+  createProduct(product: IProductReq): Observable<any> {
+    return this.http.post<IProductReq>(`${this.apiUrl}/`, product);
   }
 
-  updateProduct(id: string, product: IProductCreateReq): Observable<IProductCreateReq> {
+  updateProduct(id: string, product: IProductReq): Observable<IProductRes> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<IProductCreateReq>(url, product);
+    return this.http.put<IProductRes>(url, product);
   }
 
   deleteProduct(id: string): Observable<any> {

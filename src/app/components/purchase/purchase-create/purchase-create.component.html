@@ -13,7 +13,7 @@
                   <h3>Fill order information</h3>
                 </div>
                 <div class="col text-end">
-                  <button mat-raised-button color="primary" type="submit" [disabled]="purchaseCreateForm.invalid">
+                  <button mat-raised-button color="primary" type="submit" [disabled]="purchaseCreateForm.invalid || purchaseDetails.length ==0">
                     Create
                   </button>
                 </div>
@@ -132,7 +132,7 @@
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
-                
+
               </div>
             </form>
             <ng-template *ngIf="purchaseDetails?.length === 0">

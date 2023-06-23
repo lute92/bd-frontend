@@ -33,6 +33,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PurchaseDetailDialogComponent } from './components/purchase/purchase-detail/purchase-detail-dialog.component';
 import { PurchaseCreateComponent } from './components/purchase/purchase-create/purchase-create.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { ProductEditComponent } from './components/products/product-edit/product-edit.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     ConfirmationDialogComponent,
     ProductListComponent,
     ProductCreateComponent,
+    ProductEditComponent,
     AlertDialogComponent,
     PurchaseDetailDialogComponent,
     PurchaseCreateComponent

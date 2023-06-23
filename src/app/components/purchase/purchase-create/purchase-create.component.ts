@@ -45,7 +45,7 @@ export class PurchaseCreateComponent implements OnInit {
       currency: ['', Validators.required],
       exchangeRate: [''],
       extraCost: [''],
-      note: [''],
+      note: ['']
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Inject, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { IBrand } from '../../../models/brand';
@@ -7,28 +7,32 @@ import { ProductService } from 'src/app/services/product.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { IProductRes } from '../../../models/response/IProductRes';
-import { IProductReq } from 'src/app/models/request/IProductReq';
+
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Observable, ReplaySubject, Subject, finalize, forkJoin, last, map, of, switchMap, takeUntil } from 'rxjs';
+import { Observable, ReplaySubject, Subject, finalize, forkJoin, lastValueFrom, takeUntil } from 'rxjs';
 import { IProductImage } from 'src/app/models/product-image';
 import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
 import { MatSelect } from '@angular/material/select';
 import { CategoryCreateComponent } from '../../categories/category-create/category-create.component';
 import { BrandCreateComponent } from '../../brands/brand-create/brand-create.component';
+import { ActivatedRoute } from '@angular/router';
+import { IProductReq } from 'src/app/models/request/IProductReq';
+import { FirebaseStorageService } from 'src/app/services/firebase-storage.services';
 import { FileUploadResult } from 'src/app/models/fileupload-result';
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
-    selector: 'app-product-create',
-    templateUrl: './product-create.component.html',
-    styleUrls: ['./product-create.component.css']
+    selector: 'app-product-edit',
+    templateUrl: './product-edit.component.html',
+    styleUrls: ['./product-edit.component.css']
 })
-export class ProductCreateComponent {
+export class ProductEditComponent implements OnInit {
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
     @ViewChild('imageDialog') imageDialog!: TemplateRef<any>;
 
     @Output() productCreated: EventEmitter<IProductRes> = new EventEmitter<IProductRes>();
 
+    productId: string | null = "";
+    productInfo!: IProductRes;
 
     initialFileCount = 0;
 
@@ -60,9 +64,12 @@ export class ProductCreateComponent {
         private productService: ProductService,
         private brandService: BrandService,
         private categoryService: CategoryService,
-        public dialogRef: MatDialogRef<ProductCreateComponent>,
+        public dialogRef: MatDialogRef<ProductEditComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { productId: string },
         public dialog: MatDialog,
         private storage: AngularFireStorage,
+        private route: ActivatedRoute,
+        private firebaseService: FirebaseStorageService
     ) {
         this.productForm = this.formBuilder.group({
             productName: ['', Validators.required],
@@ -72,11 +79,52 @@ export class ProductCreateComponent {
             brand: [null, Validators.required]
         });
 
-        this.getBrands();
-        this.getCategories();
+        this.bindProductForm();
+        
     }
 
-    filterCategories() {
+    ngOnInit(): void {
+        
+    }
+
+    async bindProductForm() {
+        
+        this.getBrands().then(()=>{
+            this.getCategories().then(()=> {
+                if (this.data.productId) {
+                    this.productService.getProduct(this.data.productId).subscribe((res) => {
+                        this.productInfo = res;
+                        debugger
+                        this.productForm.patchValue({
+                            productName: this.productInfo.productName,
+                            description: this.productInfo.description,
+                            sellingPrice: this.productInfo.sellingPrice,
+                            category: this.productInfo.category,
+                            brand: this.productInfo.brand
+                        })
+
+                        this.productForm.get("category")?.setValue(this.productInfo.category);
+                        this.productForm.get("brand")?.setValue(this.productInfo.brand);
+
+                        const urls: string[] = this.productInfo.images.map((image) => {
+                            return image.url;
+                        })
+        
+                        this.downloadFiles(urls).then((files) => {
+                            this.selectedFiles = files;
+                            this.generateFilePreview(this.selectedFiles)
+                        })
+                    })
+        
+        
+                }
+            });
+        });
+        
+
+    }
+
+    protected filterCategories() {
         if (!this.categories) {
             return;
         }
@@ -97,7 +145,7 @@ export class ProductCreateComponent {
         );
     }
 
-    filterBrands() {
+    protected filterBrands() {
         if (!this.brands) {
             return;
         }
@@ -148,9 +196,9 @@ export class ProductCreateComponent {
             const product: IProductReq = this.productForm.value;
             // Perform save or update operation using the brand data
 
-            this.uploadFiles().subscribe((results: FileUploadResult[]) => {
+            this.uploadFiles().subscribe((urls) => {
 
-                this.createProduct(results);
+                this.updateProduct(urls);
 
             })
         }
@@ -164,13 +212,18 @@ export class ProductCreateComponent {
         });
     }
 
-    getBrands(): void {
+    async getBrands(): Promise<any> {
+        const brandsSubject = new Subject<any>();
+
         this.brandService.getBrands(0, 0).subscribe(res => {
-            //debugger
+
             this.brands = res.data;
 
             // set initial selection
-            this.productForm.controls['brand'].setValue(this.brands[0]);
+            if (this.brands && this.brands.length > 0) {
+                this.productForm.controls['brand'].setValue(this.brands[0]);
+            }
+            
 
             // load the initial brand list
             this.filteredBrands.next(this.brands.slice());
@@ -182,18 +235,25 @@ export class ProductCreateComponent {
                     this.filterBrands();
                 });
 
+            brandsSubject.next(this.brands);
+            brandsSubject.complete();
+
         });
     }
 
 
-    getCategories(): void {
+    async getCategories(): Promise<any> {
+        const categorySubject = new Subject<any>();
+
         this.categoryService.getCategories(0, 0).subscribe(res => {
-            //debugger
+
             this.categories = res.data;
 
             // set initial selection
-            this.productForm.controls['category'].setValue(this.categories[0]);
-
+            if (this.categories && this.categories.length > 0) {
+                this.productForm.controls['category'].setValue(this.categories[0]);
+            }
+            
             // load the initial brand list
             this.filteredCategories.next(this.categories.slice());
 
@@ -204,6 +264,9 @@ export class ProductCreateComponent {
                     this.filterCategories();
                 });
 
+            categorySubject.next(this.categories);
+            categorySubject.complete();
+
         });
     }
 
@@ -211,7 +274,7 @@ export class ProductCreateComponent {
         this.dialogRef.close();
     }
 
-    createProduct(fileUploadResults: FileUploadResult[]): void {
+    updateProduct(fileUploadResults: FileUploadResult[]): void {
 
         console.log("Creating product")
         if (this.productForm.invalid) {
@@ -221,7 +284,7 @@ export class ProductCreateComponent {
         const { productName, description, sellingPrice, brand, category } = this.productForm.value;
 
         const product: IProductReq = {
-            name: productName,
+            name : productName,
             description,
             brand: brand.brandId || null,
             sellingPrice,
@@ -229,7 +292,7 @@ export class ProductCreateComponent {
             productImages: fileUploadResults
         };
 
-        this.productService.createProduct(product)
+        this.productService.updateProduct("product.productId", product)
             .subscribe(
                 (createdProduct: IProductRes) => {
                     console.log('Product created successfully:', createdProduct);
@@ -241,10 +304,10 @@ export class ProductCreateComponent {
                 },
                 error => {
                     //To-Do need to refactor the delete image flow on product creation failed
-                    fileUploadResults.forEach((file) => {
-                        this.deleteFileStorage(file.fileName);
+                    this.selectedFiles.forEach((file) => {
+                        this.deleteFileStorage(file.name);
                     })
-                    ////debugger
+                    //debugger
                     this.openAlertDialog(error.error.message, "Failed")
                     console.error('Failed to create product:', error);
                 }
@@ -258,29 +321,32 @@ export class ProductCreateComponent {
     }
 
     onFileSelected(event: any): void {
-        ////debugger
+        //debugger
         this.selectedFiles = Array.from(event.target.files);
-        this.filePreviews = [];
+        this.generateFilePreview(this.selectedFiles);
 
+    }
+
+    generateFilePreview(files: any[]) {
+        this.filePreviews = [];
         // Generate file previews
-        for (const file of this.selectedFiles) {
+        for (const file of files) {
             const reader = new FileReader();
             reader.onload = (e: any) => {
                 this.filePreviews.push(e.target.result);
             };
             reader.readAsDataURL(file);
         }
-
     }
 
-    deleteFileStorage(name: string): void {
-        ////debugger
+    private deleteFileStorage(name: string): void {
+        //debugger
         const storageRef = this.storage.ref('product-images/');
         storageRef.child(name).delete();
     }
 
     removeImage(index: number): void {
-        ////debugger
+        //debugger
         this.selectedFiles.splice(index, 1);
         this.filePreviews.splice(index, 1)
 
@@ -299,31 +365,74 @@ export class ProductCreateComponent {
     }
 
     uploadFiles(): Observable<FileUploadResult[]> {
-        if (!this.selectedFiles || this.selectedFiles.length === 0) {
-            return of([]);
-        }
+        return new Observable<FileUploadResult[]>(observer => {
+            if (!this.selectedFiles || this.selectedFiles.length === 0) {
+                observer.complete();
+                return;
+            }
 
-        const uploadObservables: Observable<FileUploadResult>[] = [];
+            const uploadObservables: Observable<FileUploadResult>[] = [];
 
-        for (const file of this.selectedFiles) {
-            const fileName = `product-images/${uuidv4()}`;
-            const fileRef = this.storage.ref(fileName);
-            const uploadTask = this.storage.upload(fileName, file);
+            for (const file of this.selectedFiles) {
+                const fileName = `product-images/${file.name}-${Math.floor(Date.now() / 1000)}`;
+                const fileRef = this.storage.ref(fileName);
+                const uploadTask = this.storage.upload(fileName, file);
 
-            const uploadObservable = uploadTask.snapshotChanges().pipe(
-                last(),
-                switchMap(() => fileRef.getDownloadURL()),
-                map(url => ({
-                    product: "",
-                    fileName,
-                    url
-                }))
-            );
+                const uploadObservable = new Observable<FileUploadResult>(innerObserver => {
+                    uploadTask.snapshotChanges().pipe(
+                        finalize(() => {
+                            fileRef.getDownloadURL().subscribe(url => {
+                                const result: FileUploadResult = {
+                                    product:"",
+                                    fileName,
+                                    url
+                                };
+                                innerObserver.next(result);
+                                innerObserver.complete();
+                            });
+                        })
+                    ).subscribe();
+                });
 
-            uploadObservables.push(uploadObservable);
-        }
+                uploadObservables.push(uploadObservable);
+            }
 
-        return uploadObservables.length > 0 ? forkJoin(uploadObservables) : of([]);
+            if (uploadObservables.length > 0) {
+                forkJoin(uploadObservables).subscribe((results: FileUploadResult[]) => {
+                    observer.next(results);
+                    observer.complete();
+                });
+            } else {
+                observer.complete();
+            }
+        });
     }
 
+    async downloadFiles(urls: string[]): Promise<any[]> {
+        const promises: Promise<any>[] = urls.map((url) => {
+            return lastValueFrom(this.firebaseService.getFile(url));
+        });
+
+        try {
+            const files: any[] = await Promise.all(promises);
+            this.selectedFiles = files;
+            console.log(files); // Array of file objects
+            return files;
+
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    /* downloadFiles(filesToDownload: string[]):Observable<string[]>{
+        let downloadUrls : File[] = [];
+
+        this.productInfo.images.forEach((image)=> {
+            this.storage.ref(image.url).getDownloadURL().subscribe((url)=> {
+                downloadUrls.push(url);
+            });
+            
+        })
+    } */
 }

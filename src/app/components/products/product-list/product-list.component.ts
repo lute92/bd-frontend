@@ -10,6 +10,7 @@ import { ProductCreateComponent } from '../product-create/product-create.compone
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
 import { HttpClient } from '@angular/common/http';
+import { ProductEditComponent } from '../product-edit/product-edit.component';
 
 @Component({
   selector: 'app-product-list',
@@ -18,7 +19,10 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ProductListComponent implements OnInit {
 
-  displayedColumns: string[] = ['image', 'productName', 'description', 'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'];
+  displayedColumns: string[] = [
+    'image', 'productName', 'description',
+    'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'
+  ];
 
   currentPage = 1;
   totalPages = 1;
@@ -46,7 +50,7 @@ export class ProductListComponent implements OnInit {
 
 
   loadCategories(): void {
-    this.categoryService.getCategories(0,0).subscribe(
+    this.categoryService.getCategories(0, 0).subscribe(
       (res) => {
         this.categories = res.data;
         if (this.categories?.length) {
@@ -60,7 +64,7 @@ export class ProductListComponent implements OnInit {
   }
 
   loadBrands(): void {
-    this.brandService.getBrands(0,0).subscribe(
+    this.brandService.getBrands(0, 0).subscribe(
       (res) => {
         this.brands = res.data;
         if (this.brands?.length) {
@@ -131,6 +135,21 @@ export class ProductListComponent implements OnInit {
     const dialogRef = this.dialog.open(ProductCreateComponent, {
       width: '60%',
       disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Product form closed');
+      this.getALLProducts();
+    });
+  }
+
+  openEditDialogForm(productId:string):void{
+    const dialogRef = this.dialog.open(ProductEditComponent, {
+      width: '60%',
+      disableClose: true,
+      data: {
+        productId: productId
+      }
     });
 
     dialogRef.afterClosed().subscribe(() => {

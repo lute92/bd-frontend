@@ -26,8 +26,8 @@
     </div>
 
     <div>
-      <mat-label>Category</mat-label>
       <mat-form-field>
+        <mat-label>Category</mat-label>
         <mat-select formControlName="category" placeholder="Categoy" #singleSelect>
           <mat-option>
             <ngx-mat-select-search [formControl]="categoryFilterCtrl" noEntriesFoundLabel="No matching category found."
@@ -50,8 +50,8 @@
     </div>
 
     <div>
-      <mat-label>Brand</mat-label>
       <mat-form-field>
+        <mat-label>Brand</mat-label>
         <mat-select formControlName="brand" placeholder="Brand" #singleSelect>
           <mat-option>
             <ngx-mat-select-search [formControl]="brandFilterCtrl" noEntriesFoundLabel="No matching brand found."
