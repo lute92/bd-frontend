@@ -5,6 +5,7 @@ import { CategoryListComponent } from './components/categories/category-list/cat
 import { CurrencyListComponent } from './components/currency/currency-list/currency-list.component';
 import { ProductListComponent } from './components/products/product-list/product-list.component';
 import { PurchaseCreateComponent } from './components/purchase/purchase-create/purchase-create.component';
+import { PurchaseListComponent } from './components/purchase/purchase-list/purchase-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/products', pathMatch: 'full' },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'brands', component: BrandListComponent },
   { path: 'categories', component: CategoryListComponent },
   { path: 'currencies', component: CurrencyListComponent },
+  { path: 'purchases', component: PurchaseListComponent },
   { path: 'purchaseCreate', component: PurchaseCreateComponent }
 ];
 

@@ -3,7 +3,7 @@
     <div class="col-md-10">
       <mat-card>
         <mat-card-header class="mb-3">
-          <mat-card-title>Create Purchase</mat-card-title>
+          <mat-card-title>Creating Purchase</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <mat-card>
@@ -107,11 +107,11 @@
 
                   <ng-container matColumnDef="expDate">
                     <th mat-header-cell *matHeaderCellDef>Exp Date</th>
-                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.expDate }}</td>
+                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.expDate | date:'dd/MM/yyyy' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="mnuDate">
                     <th mat-header-cell *matHeaderCellDef>Mnu Date</th>
-                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.mnuDate }}</td>
+                    <td mat-cell *matCellDef="let purchaseDetail">{{ purchaseDetail.mnuDate | date:'dd/MM/yyyy' }}</td>
                   </ng-container>
 
                   <ng-container matColumnDef="description">
