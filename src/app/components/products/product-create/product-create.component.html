@@ -96,7 +96,7 @@
 
       <div class="file-preview-container">
         <div *ngFor="let preview of filePreviews; let i = index" class="file-preview">
-          <img [src]="preview" class="file-preview-thumbnail" (click)="showImage(preview)">
+          <img [src]="preview" class="file-preview-thumbnail" (click)="showImagePreview(preview)">
           <button mat-icon-button (click)="removeImage(i)">
             <mat-icon>cancel</mat-icon>
           </button>

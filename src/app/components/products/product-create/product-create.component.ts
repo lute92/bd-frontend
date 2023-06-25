@@ -251,7 +251,7 @@ export class ProductCreateComponent {
             );
     }
 
-    showImage(imageUrl: string): void {
+    showImagePreview(imageUrl: string): void {
         this.dialog.open(this.imageDialog, {
             data: imageUrl
         });
@@ -291,7 +291,7 @@ export class ProductCreateComponent {
 
     }
 
-    private resetFileInput(): void {
+    resetFileInput(): void {
         // Clear the selected files by resetting the file input value
         if (this.fileInput && this.fileInput.nativeElement) {
             this.fileInput.nativeElement.value = '';

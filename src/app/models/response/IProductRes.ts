@@ -8,8 +8,8 @@ export interface IProductRes {
     productName: string;
     description: string;
     sellingPrice: Number;
-    category: ICategory;
-    brand: IBrand;
+    category: string;
+    brand: string;
     totalQuantity?: Number ;
     images: IProductImage[];
 }
