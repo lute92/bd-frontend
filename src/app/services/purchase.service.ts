@@ -20,6 +20,13 @@ export class PurchaseService {
     return this.http.get<any>(`${this.apiUrl}`, {params});
   }
 
+  getPurchasesById(purchaseId: string): Observable<any> {
+    
+    const url = `${this.apiUrl}/${purchaseId}`;
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
   searchPurchase(page:number, limit:number): Observable<any[]> {
     let params = '';
 

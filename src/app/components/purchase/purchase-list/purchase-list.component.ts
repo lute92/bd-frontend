@@ -56,6 +56,10 @@ export class PurchaseListComponent implements OnInit {
       );
   }
 
+  goToDetailPage(purchaseId: number) {
+    this.router.navigate(['/purchaseEdit', purchaseId]);
+  }
+
 
   getAllPurchases(): void {
     this.purchaseService.getPurchases(this.currentPage, this.recordLimitParPage).subscribe(

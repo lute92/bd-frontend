@@ -6,6 +6,7 @@ import { CurrencyListComponent } from './components/currency/currency-list/curre
 import { ProductListComponent } from './components/products/product-list/product-list.component';
 import { PurchaseCreateComponent } from './components/purchase/purchase-create/purchase-create.component';
 import { PurchaseListComponent } from './components/purchase/purchase-list/purchase-list.component';
+import { PurchaseEditComponent } from './components/purchase/purchase-edit/purchase-edit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/products', pathMatch: 'full' },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'categories', component: CategoryListComponent },
   { path: 'currencies', component: CurrencyListComponent },
   { path: 'purchases', component: PurchaseListComponent },
-  { path: 'purchaseCreate', component: PurchaseCreateComponent }
+  { path: 'purchaseCreate', component: PurchaseCreateComponent },
+  { path: 'purchaseEdit/:id', component: PurchaseEditComponent },
 ];
 
 @NgModule({

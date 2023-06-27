@@ -35,6 +35,7 @@ import { PurchaseCreateComponent } from './components/purchase/purchase-create/p
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ProductEditComponent } from './components/products/product-edit/product-edit.component';
 import { PurchaseListComponent } from './components/purchase/purchase-list/purchase-list.component';
+import { PurchaseEditComponent } from './components/purchase/purchase-edit/purchase-edit.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { PurchaseListComponent } from './components/purchase/purchase-list/purch
     AlertDialogComponent,
     PurchaseDetailDialogComponent,
     PurchaseCreateComponent,
-    PurchaseListComponent
+    PurchaseListComponent,
+    PurchaseEditComponent
   ],
   imports: [
     BrowserModule,

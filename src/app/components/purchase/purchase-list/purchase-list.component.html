@@ -28,7 +28,7 @@
 
               <ng-container matColumnDef="currency">
                 <th mat-header-cell *matHeaderCellDef>Currency</th>
-                <td mat-cell *matCellDef="let purchase">{{ purchase.currency }}</td>
+                <td mat-cell *matCellDef="let purchase">{{ purchase.currency.name }}</td>
               </ng-container>
 
               <ng-container matColumnDef="exchangeRate">
@@ -38,7 +38,7 @@
 
               <ng-container matColumnDef="extraCost">
                 <th mat-header-cell *matHeaderCellDef>Extra Cost</th>
-                <td mat-cell *matCellDef="let purchase">{{ purchase.extraCost }}</td>
+                <td mat-cell *matCellDef="let purchase">{{ purchase.extraCost ?? 0 }}</td>
               </ng-container>
 
               <ng-container matColumnDef="note">
@@ -60,7 +60,7 @@
 
               <!-- Render the columns -->
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToDetailPage(row.purchaseId)"></tr>
             </table>
           </div>
 
