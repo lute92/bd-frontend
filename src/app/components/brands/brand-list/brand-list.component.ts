@@ -16,7 +16,7 @@ import { BrandCreateComponent } from '../brand-create/brand-create.component'; *
 export class BrandListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
-  recordLimitParPage = 7;
+  recordLimitParPage = 0;
 
   searchNameVal: string = "";
   searchDescVal: string = "";
@@ -31,6 +31,22 @@ export class BrandListComponent implements OnInit {
     this.getAllBrands();
   }
 
+  searchBrands() {
+    this.brandService.searchBrands(
+      this.searchNameVal,
+      this.searchDescVal).
+      subscribe(
+        (res: any) => {
+          console.log("Received Data")
+          this.brands = res.data;
+          this.totalPages = res.totalPages;
+        },
+        (error: any) => {
+          console.error(error);
+        }
+      );
+  }
+
   getAllBrands() {
 
     this.brandService.getBrands(
@@ -42,7 +58,7 @@ export class BrandListComponent implements OnInit {
 
     ).subscribe(
       (res: any) => {
-        console.log("Received Datas")
+        console.log("Received Data")
         this.brands = res.data;
         this.totalPages = res.totalPages;
       },
@@ -53,7 +69,7 @@ export class BrandListComponent implements OnInit {
   }
 
   openDeleteConfirmationDialog(brand: IBrand): void {
-    
+
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: "Delete Confirmation",

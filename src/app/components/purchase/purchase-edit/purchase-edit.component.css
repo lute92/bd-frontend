@@ -1,0 +1,12 @@
+.image-container {
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    margin: 1em;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}

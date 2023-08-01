@@ -3,6 +3,7 @@ import { IPurchaseDetail } from "./purchase-details";
 
 export interface IPurchase {
     purchaseId:string,
+    orderNumber:string,
     purchaseDate: Date,
     currency: ICurrency,
     exchangeRate: number,

@@ -14,11 +14,30 @@ export class BrandService {
 
   constructor(private http: HttpClient) { }
 
+  searchBrands(brandName?: string, description?: string): Observable<any> {
+    let params = new HttpParams();
+    
+    if (brandName) {
+      params = params.set('name', brandName);
+    }
+  
+    if (description) {
+      params = params.set('description', description);
+    }
+  
+    return this.http.get<any>(`${this.apiUrl}/${this.endPoint}`, { params });
+  }
 
-  getBrands(page: number, limit: number, brandName?: string, description?: string): Observable<any> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('limit', limit.toString());
+  getBrands(page?: number, limit?: number, brandName?: string, description?: string): Observable<any> {
+    let params = new HttpParams();
+
+    if (page) {
+      params = params.set('page', page);
+    }
+
+    if (limit) {
+      params = params.set('limit', limit);
+    }
   
     if (brandName) {
       params = params.set('name', brandName);

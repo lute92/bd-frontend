@@ -13,7 +13,7 @@ import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmat
 export class CategoryListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
-  recordLimitParPage = 7;
+  recordLimitParPage = 0;
 
   searchNameVal: string = "";
   searchDescVal: string = "";

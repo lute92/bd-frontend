@@ -36,6 +36,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ProductEditComponent } from './components/products/product-edit/product-edit.component';
 import { PurchaseListComponent } from './components/purchase/purchase-list/purchase-list.component';
 import { PurchaseEditComponent } from './components/purchase/purchase-edit/purchase-edit.component';
+import { PurchaseDetailEditDialogComponent } from './components/purchase/purchase-detail-edit/purchase-detail-edit-dialog.component';
+import { ProductImportComponent } from './components/productImport/product-import.component';
 
 @NgModule({
   declarations: [
@@ -53,9 +55,11 @@ import { PurchaseEditComponent } from './components/purchase/purchase-edit/purch
     ProductEditComponent,
     AlertDialogComponent,
     PurchaseDetailDialogComponent,
+    PurchaseDetailEditDialogComponent,
     PurchaseCreateComponent,
     PurchaseListComponent,
-    PurchaseEditComponent
+    PurchaseEditComponent,
+    ProductImportComponent
   ],
   imports: [
     BrowserModule,

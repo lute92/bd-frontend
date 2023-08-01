@@ -7,6 +7,7 @@ import { ProductListComponent } from './components/products/product-list/product
 import { PurchaseCreateComponent } from './components/purchase/purchase-create/purchase-create.component';
 import { PurchaseListComponent } from './components/purchase/purchase-list/purchase-list.component';
 import { PurchaseEditComponent } from './components/purchase/purchase-edit/purchase-edit.component';
+import { ProductImportComponent } from './components/productImport/product-import.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/products', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'purchases', component: PurchaseListComponent },
   { path: 'purchaseCreate', component: PurchaseCreateComponent },
   { path: 'purchaseEdit/:id', component: PurchaseEditComponent },
+  { path: 'importProduct', component: ProductImportComponent }
 ];
 
 @NgModule({

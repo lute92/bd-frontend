@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
 import { HttpClient } from '@angular/common/http';
 import { ProductEditComponent } from '../product-edit/product-edit.component';
+import { Observable, catchError, finalize, forkJoin, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -19,6 +20,8 @@ import { ProductEditComponent } from '../product-edit/product-edit.component';
 })
 export class ProductListComponent implements OnInit {
 
+  loading: boolean = false;
+
   displayedColumns: string[] = [
     'image', 'productName', 'description',
     'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'
@@ -26,7 +29,7 @@ export class ProductListComponent implements OnInit {
 
   currentPage = 1;
   totalPages = 1;
-  recordLimitParPage = 4;
+  recordLimitParPage = 0;
 
   productName: string = "";
   categoryId: string = "";
@@ -43,38 +46,58 @@ export class ProductListComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.getALLProducts();
-    this.loadCategories();
-    this.loadBrands();
+    this.initializeData();
   }
 
+  initializeData(): void {
+    this.loading = true;
+    forkJoin([
+      this.loadCategories(),
+      this.loadBrands(),
+      this.getALLProducts()
+    ]).pipe(finalize(() => this.loading = false)).subscribe();
+  }
 
-  loadCategories(): void {
-    this.categoryService.getCategories(0, 0).subscribe(
-      (res) => {
+  loadCategories(): Observable<void> {
+    return this.categoryService.getCategories(0, 0).pipe(
+      tap((res) => {
         this.categories = res.data;
         if (this.categories?.length) {
-          this.categories.unshift({ categoryId: "", name: "All", description: "" })
+          this.categories.unshift({ categoryId: "", name: "All", description: "" });
         }
-      },
-      (error: any) => {
-        console.error(error);
-      }
+      }),
+      catchError((error) => {
+        console.error('Failed to load categories:', error);
+        return throwError(error);
+      })
     );
   }
 
-  loadBrands(): void {
-    this.brandService.getBrands(0, 0).subscribe(
-      (res) => {
+  loadBrands(): Observable<void> {
+    return this.brandService.getBrands(0, 0).pipe(
+      tap((res) => {
         this.brands = res.data;
         if (this.brands?.length) {
-          this.brands.unshift({ brandId: "", name: "All", description: "" })
+          this.brands.unshift({ brandId: "", name: "All", description: "" });
         }
+      }),
+      catchError((error) => {
+        console.error('Failed to load brands:', error);
+        return throwError(error);
+      })
+    );
+  }
 
-      },
-      (error: any) => {
-        console.error(error);
-      }
+  getALLProducts(): Observable<void> {
+    return this.productService.getProducts(this.currentPage, this.recordLimitParPage).pipe(
+      tap((res: any) => {
+        this.products = res.data;
+        this.totalPages = res.totalPages;
+      }),
+      catchError((error) => {
+        console.error('Failed to retrieve products:', error);
+        return throwError(error);
+      })
     );
   }
 
@@ -100,17 +123,7 @@ export class ProductListComponent implements OnInit {
   }
 
 
-  getALLProducts(): void {
-    this.productService.getProducts(this.currentPage, this.recordLimitParPage).subscribe(
-      (res: any) => {
-        this.products = res.data;
-        this.totalPages = res.totalPages;
-      },
-      (error) => {
-        console.log('Failed to retrieve products:', error);
-      }
-    );
-  }
+
 
 
   goToPage(page: number): void {
@@ -143,7 +156,7 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  openEditDialogForm(productId:string):void{
+  openEditDialogForm(productId: string): void {
     const dialogRef = this.dialog.open(ProductEditComponent, {
       width: '60%',
       disableClose: true,

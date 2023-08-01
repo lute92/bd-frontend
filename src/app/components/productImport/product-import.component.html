@@ -1,0 +1,13 @@
+<div class="container">
+    <mat-card class="upload-card">
+        <mat-card-header class="mb-4">
+            <h2>Import products from Excel.</h2>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="file-upload-container">
+                <input type="file" class="file-input" (change)="onFileChange($event)" accept=".xlsx">
+                <button mat-raised-button color="primary" (click)="uploadFile()">Upload</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

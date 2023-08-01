@@ -20,8 +20,13 @@ import { IPurchase } from 'src/app/models/purchase';
 export class PurchaseListComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'purchaseDate', 'currency', 'exchangeRate',
-    'extraCost', 'note', 'actions'
+    'orderNumber',
+    'purchaseDate',
+    'currency',
+    'exchangeRate',
+    'extraCost',
+    'note',
+    'actions'
   ];
 
   currentPage = 1;
@@ -44,7 +49,7 @@ export class PurchaseListComponent implements OnInit {
   }
 
   searchPurchases(): void {
-    
+
     this.purchaseService.searchPurchase(this.currentPage, this.recordLimitParPage)
       .subscribe(
         (response: any) => {
@@ -58,6 +63,10 @@ export class PurchaseListComponent implements OnInit {
 
   goToDetailPage(purchaseId: number) {
     this.router.navigate(['/purchaseEdit', purchaseId]);
+  }
+
+  stopPropagation(event: Event) {
+    event.stopPropagation();
   }
 
 
@@ -104,7 +113,7 @@ export class PurchaseListComponent implements OnInit {
     });
   }
 
-  
+
 
   openDeleteConfirmationDialog(purchase: IPurchase): void {
 

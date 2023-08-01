@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    height: 100vh;
+    padding-top:3rem;
+    padding-left:3rem;
+  }
+  
+  .upload-card {
+    width: 50%;
+  }
+  
+  .file-upload-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .file-input {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  button {
+    min-width: 120px;
+  }
+  

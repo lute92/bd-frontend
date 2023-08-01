@@ -1,16 +1,16 @@
-<div class="container m-5">
+<div class="container m-1">
   <div class="row justify-content-center">
-    <div class="col-md-10">
+    <div class="col-md-12">
       <mat-card>
         <mat-card-header>
           <mat-card-title>Purchasing Records</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
           <div class="col text-end">
-            <button mat-raised-button color="primary" class="mb-3" (click)="navigateToPurchaseCreate()">
+            <button mat-raised-button class="cus-action-button" class="mb-3" (click)="navigateToPurchaseCreate()">
               <mat-icon class="mr-2">add</mat-icon>Add New
             </button>
           </div>
+        </mat-card-header>
+        <mat-card-content>
           <mat-divider class="mb-2"></mat-divider>
           <div class="row">
             
@@ -19,8 +19,13 @@
           <div class="row mb-3">
             <table mat-table [dataSource]="purchases" class="mat-elevation-z8">
 
-              
               <!-- Define the columns -->
+
+              <ng-container matColumnDef="orderNumber">
+                <th mat-header-cell *matHeaderCellDef>Order No.</th>
+                <td mat-cell *matCellDef="let purchase">{{ purchase.orderNumber }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="purchaseDate">
                 <th mat-header-cell *matHeaderCellDef>Purchase Date</th>
                 <td mat-cell *matCellDef="let purchase">{{ purchase.purchaseDate | date:'dd/MM/yyyy' }}</td>
@@ -50,8 +55,8 @@
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let product">
 
-                  <button mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
-                  <mat-menu #menu="matMenu">
+                  <button mat-button (click)="stopPropagation($event);" [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+                  <mat-menu #menu="matMenu" >
                     <button mat-menu-item>View Details</button>
                     <button mat-menu-item (click)="openDeleteConfirmationDialog(product)">Delete</button>
                   </mat-menu>
@@ -60,7 +65,7 @@
 
               <!-- Render the columns -->
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToDetailPage(row.purchaseId)"></tr>
+              <tr mat-row class="mat-row" *matRowDef="let row; columns: displayedColumns;" (click)="goToDetailPage(row.purchaseId)"></tr>
             </table>
           </div>
 

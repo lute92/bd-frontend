@@ -23,4 +23,14 @@ th {
     font-size: 1.1em !important;
 }
 
+.cus-action-button {
+    background-color: #055160 !important;
+    color: #e6eced !important;
+}
 
+/*Row hover effect for mat-table*/
+.mat-row:hover {
+    background-color: #e6ebf2 !important;
+    /* Change this to the desired hover background color */
+    cursor: pointer !important;
+}

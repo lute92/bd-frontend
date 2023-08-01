@@ -1,16 +1,17 @@
-<div class="container m-5">
-    <div class="row justify-content-center">
+<div class="container m-1">
+    <div class="row justify-content-start">
         <div class="col-md-8">
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>Brands</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
                     <div class="col text-end">
                         <button mat-raised-button color="primary" class="mb-3" (click)="openBrandForm()">
                             <mat-icon class="mr-2">add</mat-icon>Add New
                         </button>
                     </div>
+                </mat-card-header>
+                <mat-card-content>
+
                     <mat-divider class="mb-2"></mat-divider>
                     <div class="row">
                         <div class="col">
@@ -58,7 +59,8 @@
                                     <mat-menu #menu="matMenu">
                                         <button mat-menu-item>View Stocks</button>
                                         <button mat-menu-item>Edit</button>
-                                        <button mat-menu-item (click)="openDeleteConfirmationDialog(brand)">Delete</button>
+                                        <button mat-menu-item
+                                            (click)="openDeleteConfirmationDialog(brand)">Delete</button>
                                     </mat-menu>
                                 </td>
                             </ng-container>
@@ -74,7 +76,8 @@
                     </ng-template>
                 </mat-card-content>
                 <div class="pagination d-flex justify-content-center align-items-center mt-3 mb-2">
-                    <button mat-raised-button color="primary" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                    <button mat-raised-button color="primary" [disabled]="currentPage === 1"
+                        (click)="goToPage(currentPage - 1)">
                         Previous
                     </button>
                     <span class="current-page mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
@@ -86,8 +89,8 @@
             </mat-card>
         </div>
 
-        
+
     </div>
 
-    
+
 </div>

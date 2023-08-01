@@ -73,6 +73,7 @@ export class PurchaseCreateComponent implements OnInit {
 
     const purchase: IPurchase = {
       purchaseId: "",
+      orderNumber: "",
       purchaseDate: purchaseDate,
       currency: currency,
       exchangeRate: exchangeRate,

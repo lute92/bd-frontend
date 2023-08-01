@@ -11,7 +11,7 @@ import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component'
 import { IPurchase } from 'src/app/models/purchase';
 import { PurchaseService } from 'src/app/services/purchase.service';
 import { ActivatedRoute } from '@angular/router';
-import { ReplaySubject, firstValueFrom, take } from 'rxjs';
+import { ReplaySubject, finalize, firstValueFrom, take } from 'rxjs';
 
 @Component({
   selector: 'app-purchase-edit',
@@ -21,19 +21,20 @@ import { ReplaySubject, firstValueFrom, take } from 'rxjs';
 export class PurchaseEditComponent implements OnInit {
   @ViewChild(MatTable) table!: MatTable<any>;
 
+  loading: boolean = false;
 
   purchaseEditForm!: FormGroup;
-  pruchaseId!: string;
+  orderNumber!: string;
 
   purchaseDetails: IPurchaseDetail[] = [];
 
   currencies: ICurrency[] = [];
 
   displayedColumns: string[] = [
+    'image',
     'product',
     'quantity',
     'purchasePrice',
-    'itemCost',
     'expDate',
     'mnuDate',
     'delete'
@@ -55,37 +56,43 @@ export class PurchaseEditComponent implements OnInit {
     });
 
 
-
   }
 
   ngOnInit() {
     this.getCurrencies();
     debugger
-    this.route.params.subscribe((params)=> {
+    this.route.params.subscribe((params) => {
+      this.loading = true;
       const purchaseId = params['id'];
-      if(purchaseId){
-        this.purchaseService.getPurchasesById(purchaseId).subscribe((res) => {
-          if (res) {
-            const purchaseInfo = res;
-            const { purchase, purchaseDetails } = purchaseInfo;
-  
-            this.purchaseEditForm.patchValue({
-              purchaseDate: purchase.purchaseDate,
-              exchangeRate: purchase.exchangeRate,
-              extraCost: purchase.extraCost,
-              
-              note: purchase.note
-            });
-            this.purchaseEditForm.get('currency')?.patchValue(purchase.currency);
-  
-            this.purchaseDetails = purchaseDetails;
-          }
-        });
-      }
-    })
-    
-  }
+      if (purchaseId) {
+        this.purchaseService.getPurchasesById(purchaseId)
+          .pipe(
+            finalize(() => {
+              this.loading = false; // Set loading to false in the "finally" stage
+            })
+          )
+          .subscribe((res) => {
+            if (res) {
+              const purchaseInfo = res;
+              const { purchase, purchaseDetails } = purchaseInfo;
 
+              this.orderNumber = purchase.orderNumber;
+
+              this.purchaseEditForm.patchValue({
+                purchaseDate: purchase.purchaseDate,
+                exchangeRate: purchase.exchangeRate,
+                extraCost: purchase.extraCost,
+                note: purchase.note
+              });
+              this.purchaseEditForm.get('currency')?.patchValue(purchase.currency);
+
+              this.purchaseDetails = purchaseDetails;
+            }
+          });
+      }
+    });
+
+  }
 
   getCurrencies() {
     this.currencyService.getCurrencies().subscribe(res => {
@@ -107,6 +114,7 @@ export class PurchaseEditComponent implements OnInit {
 
     const purchase: IPurchase = {
       purchaseId: "",
+      orderNumber: purchaseDate.orderNumber,
       purchaseDate: purchaseDate,
       currency: currency,
       exchangeRate: exchangeRate,
@@ -158,7 +166,7 @@ export class PurchaseEditComponent implements OnInit {
           this.table.renderRows();
         }
         else {
-          this.openAlertDialog("Same item already exist in Item List.", "Duplicate Product!")
+          this.openAlertDialog("Same item already added in the list.", "Already added!")
         }
       }
     });
