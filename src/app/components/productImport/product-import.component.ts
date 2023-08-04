@@ -16,11 +16,10 @@ export class ProductImportComponent {
   importFailedStatus: boolean = false;
 
   constructor(private http: HttpClient) { }
-  
+  private apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}`;
 
   ngOnInit() {
-    const apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}`;
-    this.uploader = new FileUploader({ url: `${apiUrl}/products/import`, itemAlias: 'excelFile' });
+    this.uploader = new FileUploader({ url: `${this.apiUrl}/products/import`, itemAlias: 'excelFile' });
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       console.log('File uploaded successfully', item, status, response);
     };
@@ -48,7 +47,7 @@ export class ProductImportComponent {
   uploadFile() {
     if (this.excelData.length > 0) {
      
-      this.http.post<any>('http://localhost:4900/products/import', this.excelData).subscribe(
+      this.http.post<any>(`${this.apiUrl}/products/import`, this.excelData).subscribe(
         (response) => {
           console.log('Data sent successfully', response);
           this.importSuccessStatus = true;
