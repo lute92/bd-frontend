@@ -23,7 +23,7 @@ export class ProductListComponent implements OnInit {
   loading: boolean = false;
 
   displayedColumns: string[] = [
-    'image', 'productName', 'description',
+    'image', 'productName', 'weight', 'mnuCountry',
     'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'
   ];
 

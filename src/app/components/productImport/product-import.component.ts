@@ -11,6 +11,8 @@ import { HttpClient } from '@angular/common/http';
 export class ProductImportComponent {
   uploader!: FileUploader;
   excelData: any[] = [];
+  importSuccessStatus: boolean = false;
+  importFailedStatus: boolean = false;
 
   constructor(private http: HttpClient) { }
 
@@ -46,8 +48,10 @@ export class ProductImportComponent {
       this.http.post<any>('http://localhost:4900/products/import', this.excelData).subscribe(
         (response) => {
           console.log('Data sent successfully', response);
+          this.importSuccessStatus = true;
         },
         (error) => {
+          this.importFailedStatus = true;
           console.error('Error sending data', error);
         }
       );
