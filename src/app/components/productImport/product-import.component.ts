@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import * as XLSX from 'xlsx'; // Add this import statement
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-import',
@@ -15,9 +16,10 @@ export class ProductImportComponent {
   importFailedStatus: boolean = false;
 
   constructor(private http: HttpClient) { }
+  private apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}`;
 
   ngOnInit() {
-    this.uploader = new FileUploader({ url: 'http://localhost:4900/products/import', itemAlias: 'excelFile' });
+    this.uploader = new FileUploader({ url: `${this.apiUrl}/products/import`, itemAlias: 'excelFile' });
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       console.log('File uploaded successfully', item, status, response);
     };
