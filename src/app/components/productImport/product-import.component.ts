@@ -16,7 +16,7 @@ export class ProductImportComponent {
   importFailedStatus: boolean = false;
 
   constructor(private http: HttpClient) { }
-  private apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}`;
+  private apiUrl = `${environment.BACKEND_SERVER_URL}`;
 
   ngOnInit() {
     this.uploader = new FileUploader({ url: `${this.apiUrl}/products/import`, itemAlias: 'excelFile' });

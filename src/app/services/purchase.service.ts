@@ -9,7 +9,7 @@ import { IPurchase } from '../models/purchase';
 })
 export class PurchaseService {
   private endPoint = 'purchases';
-  private apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}/${this.endPoint}`;
+  private apiUrl = `${environment.BACKEND_SERVER_URL}/${this.endPoint}`;
 
   constructor(private http: HttpClient) { }
 

@@ -10,7 +10,7 @@ import { environment } from '../../../src/environments/environment';
 export class BrandService {
 
   private endPoint = 'brands';
-  private apiUrl = `${environment.BACKEND_SERVER_URL}:${environment.BACKEND_SERVER_PORT}`;
+  private apiUrl = `${environment.BACKEND_SERVER_URL}`;
 
   constructor(private http: HttpClient) { }
 

@@ -10,6 +10,5 @@ export const environment = {
         appId: "1:600595452108:web:f453ba8ad6dfa99f2df269",
         measurementId: "G-DX3ZQY65Q8"
     },
-    BACKEND_SERVER_URL: "http://localhost",
-    BACKEND_SERVER_PORT:"4900"
+    BACKEND_SERVER_URL: "http://localhost:4900"
   };

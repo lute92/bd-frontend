@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IProductImage } from '../models/product-image';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
   private endPoint = 'productImages';
-  private apiUrl = 'http://localhost:4900'; // Replace with your API URL
+  private apiUrl = `${environment.BACKEND_SERVER_URL}`; // Replace with your API URL
 
   constructor(private http: HttpClient) { }
 
