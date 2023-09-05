@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider ng build --configuration development",
+    "build:prod": "NODE_OPTIONS=--openssl-legacy-provider ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -41,6 +42,7 @@
     "@types/file-saver": "^2.0.5",
     "@types/jasmine": "~4.3.0",
     "@types/uuid": "^9.0.2",
+    "http-proxy-middleware": "^2.0.6",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
