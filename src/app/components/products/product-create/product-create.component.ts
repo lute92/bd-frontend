@@ -220,13 +220,13 @@ export class ProductCreateComponent {
 
         const { productName, description, sellingPrice, brand, category } = this.productForm.value;
 
-        const product: IProductReq = {
+        const product: any = {
             name: productName,
             description,
             brand: brand.brandId || null,
             sellingPrice,
             category: category.categoryId || null,
-            productImages: fileUploadResults
+            images: fileUploadResults
         };
 
         this.productService.createProduct(product)

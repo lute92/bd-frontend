@@ -99,7 +99,6 @@ export class PurchaseDetailDialogComponent implements OnInit {
 
   onAddClick() {
     if (this.purchaseDetailForm.valid) {
-      debugger
       this.dialogRef.close(this.purchaseDetailForm.value);
     }
   }

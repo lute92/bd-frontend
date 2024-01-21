@@ -45,7 +45,6 @@ export class PurchaseService {
   }
 
   createPurchase(purchase: IPurchase): Observable<any> {
-    debugger
     return this.http.post<IPurchase>(`${this.apiUrl}/`, purchase);
   }
 

@@ -12,8 +12,8 @@
     <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
       <mat-form-field>
         <mat-label>Product name</mat-label>
-        <input matInput placeholder="Product Name" formControlName="productName">
-        <mat-error *ngIf="productForm.get('productName')?.invalid && productForm.get('productName')?.touched">
+        <input matInput placeholder="Product Name" formControlName="name">
+        <mat-error *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
           Product name is required.
         </mat-error>
       </mat-form-field>

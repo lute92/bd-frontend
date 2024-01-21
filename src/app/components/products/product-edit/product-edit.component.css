@@ -22,7 +22,7 @@
 .image-container {
     width: 150px;
     height: 150px;
-    overflow: hidden;
+    display: block;
     margin: 1em;
 }
 

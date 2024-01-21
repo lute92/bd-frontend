@@ -60,7 +60,6 @@ export class PurchaseEditComponent implements OnInit {
 
   ngOnInit() {
     this.getCurrencies();
-    debugger
     this.route.params.subscribe((params) => {
       this.loading = true;
       const purchaseId = params['id'];
@@ -155,7 +154,6 @@ export class PurchaseEditComponent implements OnInit {
 
 
     dialogRef.afterClosed().subscribe((newItem: IPurchaseDetail) => {
-      debugger
       if (newItem) {
         let result = this.purchaseDetails.find((purchase) => {
           return purchase.product.productId === newItem.product.productId;

@@ -34,7 +34,7 @@ export class ProductEditComponent {
     @Output() productCreated: EventEmitter<IProductRes> = new EventEmitter<IProductRes>();
 
     productId: string | null = "";
-    productInfo!: IProductRes;
+    productInfo!: any;
 
     initialFileCount = 0;
 
@@ -54,8 +54,8 @@ export class ProductEditComponent {
     public brandFilterCtrl: FormControl<string | null> = new FormControl<string>('');
 
     /** list of categories and brand filtered by search keyword */
-    public filteredCategories: ReplaySubject<ICategory[]> = new ReplaySubject<ICategory[]>(1);
-    public filteredBrands: ReplaySubject<IBrand[]> = new ReplaySubject<IBrand[]>(1);
+    public filteredCategories: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
+    public filteredBrands: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
 
 
     @ViewChild('singleSelect', { static: true }) singleSelect!: MatSelect;
@@ -76,7 +76,7 @@ export class ProductEditComponent {
         private firebaseService: FirebaseStorageService
     ) {
         this.productForm = this.formBuilder.group({
-            productName: ['', Validators.required],
+            name: ['', Validators.required],
             description: [''],
             sellingPrice: [0],
             category: [null, Validators.required],
@@ -88,6 +88,7 @@ export class ProductEditComponent {
     }
 
     async bindProductForm() {
+        debugger
         await Promise.all([this.getBrands(), this.getCategories()]);
 
         // Convert ReplaySubject to array
@@ -96,18 +97,19 @@ export class ProductEditComponent {
 
         if (this.data.productId) {
             this.productService.getProduct(this.data.productId).subscribe((res) => {
-                this.productInfo = {} as IProductRes; // Initialize as an empty object
+                //this.productInfo = {} as any; // Initialize as an empty object
 
                 if (res) {
+                    debugger
                     this.productInfo = res;
 
-                    const { productName, description, sellingPrice, category, brand } = this.productInfo;
+                    const { name, description, sellingPrice, category, brand, images, weight } = this.productInfo;
 
-                    const selectedCategory = categoriesArray?.find(categoryItem => categoryItem.categoryId === category);
-                    const selectedBrand = brandsArray?.find(brandItem => brandItem.brandId === brand);
+                    const selectedCategory = categoriesArray?.find(categoryItem => categoryItem._id === category);
+                    const selectedBrand = brandsArray?.find(brandItem => brandItem._id === brand);
 
                     this.productForm.patchValue({
-                        productName,
+                        name,
                         description,
                         sellingPrice
                     });
@@ -117,7 +119,7 @@ export class ProductEditComponent {
 
                     this.filePreviews = this.productInfo.images.slice();
 
-                    let downloadUrls = this.productInfo.images.map((item => item.url));
+                    let downloadUrls = this.productInfo.images.map((item:any) => {return item.url});
 
                     this.downloadFiles(downloadUrls).then((files) => {
                         this.selectedFiles = files;
@@ -200,7 +202,7 @@ export class ProductEditComponent {
 
         this.brandService.getBrands(0, 0).subscribe(res => {
 
-            this.brands = res.data;
+            this.brands = res.brands;
 
             // set initial selection
             if (this.brands && this.brands.length > 0) {
@@ -229,7 +231,7 @@ export class ProductEditComponent {
 
         this.categoryService.getCategories(0, 0).subscribe(res => {
 
-            this.categories = res.data;
+            this.categories = res.categories;
 
             // set initial selection
             if (this.categories && this.categories.length > 0) {
@@ -299,18 +301,18 @@ export class ProductEditComponent {
             return throwError('Invalid form');
         }
 
-        const { productName, description, sellingPrice, brand, category } = this.productForm.value;
+        const { name, description, sellingPrice, brand, category } = this.productForm.value;
 
-        const product: IProductReq = {
-            name: productName,
+        const product = {
+            name: name,
             description,
-            brand: brand.brandId || null,
+            brand: brand._id || null,
             sellingPrice,
-            category: category.categoryId || null,
-            productImages: fileUploadResults,
+            category: category._id || null,
+            images: fileUploadResults,
         };
 
-        return this.productService.updateProduct(this.productInfo.productId, product).pipe(
+        return this.productService.updateProduct(this.productInfo._id, product).pipe(
             tap((createdProduct: IProductRes) => {
                 console.log('Product created successfully:', createdProduct);
                 this.productCreated.emit(createdProduct);
@@ -408,9 +410,8 @@ export class ProductEditComponent {
         if (!this.selectedFiles || this.selectedFiles.length === 0) {
             return of([]);
         }
-        debugger
         console.log(this.productInfo);
-        this.productInfo.images.forEach((image) => {
+        this.productInfo.images.forEach((image:any) => {
 
             let fileName = image.fileName.replace("product-images/", "");
             this.deleteFileStorage(fileName)

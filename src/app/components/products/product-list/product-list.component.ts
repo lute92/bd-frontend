@@ -29,15 +29,15 @@ export class ProductListComponent implements OnInit {
 
   currentPage = 1;
   totalPages = 1;
-  recordLimitParPage = 0;
+  recordLimitParPage = 5;
 
   productName: string = "";
   categoryId: string = "";
   brandId: string = "";
 
-  products: IProductRes[] = [];
-  categories: ICategory[] = [];
-  brands: IBrand[] = [];
+  products: any[] = [];
+  categories: any[] = [];
+  brands: any[] = [];
 
   constructor(
     private productService: ProductService,
@@ -51,17 +51,27 @@ export class ProductListComponent implements OnInit {
 
   initializeData(): void {
     this.loading = true;
+  
     forkJoin([
       this.loadCategories(),
       this.loadBrands(),
       this.getALLProducts()
-    ]).pipe(finalize(() => this.loading = false)).subscribe();
+    ]).pipe(
+      finalize(() => this.loading = false),
+      catchError((error) => {
+        console.error('Failed to initialize data:', error);
+        return throwError(error);
+      })
+    ).subscribe(() => {
+      
+    });
   }
+  
 
   loadCategories(): Observable<void> {
     return this.categoryService.getCategories(0, 0).pipe(
       tap((res) => {
-        this.categories = res.data;
+        this.categories = res.categories;
         if (this.categories?.length) {
           this.categories.unshift({ categoryId: "", name: "All", description: "" });
         }
@@ -76,7 +86,7 @@ export class ProductListComponent implements OnInit {
   loadBrands(): Observable<void> {
     return this.brandService.getBrands(0, 0).pipe(
       tap((res) => {
-        this.brands = res.data;
+        this.brands = res.brands;
         if (this.brands?.length) {
           this.brands.unshift({ brandId: "", name: "All", description: "" });
         }
@@ -91,7 +101,7 @@ export class ProductListComponent implements OnInit {
   getALLProducts(): Observable<void> {
     return this.productService.getProducts(this.currentPage, this.recordLimitParPage).pipe(
       tap((res: any) => {
-        this.products = res.data;
+        this.products = res.products;
         this.totalPages = res.totalPages;
       }),
       catchError((error) => {
@@ -114,7 +124,8 @@ export class ProductListComponent implements OnInit {
       this.productName, this.brandId, this.categoryId)
       .subscribe(
         (response: any) => {
-          this.products = response.data;
+          this.products = response.products;
+          this.totalPages = response.totalPages;
         },
         (error) => {
           console.error(error);
@@ -123,13 +134,10 @@ export class ProductListComponent implements OnInit {
   }
 
 
-
-
-
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.getALLProducts();
+      this.searchProducts();
     }
   }
 

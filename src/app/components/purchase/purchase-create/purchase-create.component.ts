@@ -114,7 +114,6 @@ export class PurchaseCreateComponent implements OnInit {
 
 
     dialogRef.afterClosed().subscribe((newItem: IPurchaseDetail) => {
-      debugger
       if (newItem) {
         let result = this.purchaseDetails.find((purchase) => {
           return purchase.product.productId === newItem.product.productId;

@@ -8,17 +8,20 @@ import { PurchaseCreateComponent } from './components/purchase/purchase-create/p
 import { PurchaseListComponent } from './components/purchase/purchase-list/purchase-list.component';
 import { PurchaseEditComponent } from './components/purchase/purchase-edit/purchase-edit.component';
 import { ProductImportComponent } from './components/productImport/product-import.component';
+import { LoginComponent } from './components/login/login.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/products', pathMatch: 'full' },
-  { path: 'products', component: ProductListComponent },
-  { path: 'brands', component: BrandListComponent },
-  { path: 'categories', component: CategoryListComponent },
-  { path: 'currencies', component: CurrencyListComponent },
-  { path: 'purchases', component: PurchaseListComponent },
-  { path: 'purchaseCreate', component: PurchaseCreateComponent },
-  { path: 'purchaseEdit/:id', component: PurchaseEditComponent },
-  { path: 'importProduct', component: ProductImportComponent }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'products', component: ProductListComponent, canActivate: [AuthGuard] },
+  { path: 'brands', component: BrandListComponent, canActivate: [AuthGuard] },
+  { path: 'categories', component: CategoryListComponent, canActivate: [AuthGuard] },
+  { path: 'currencies', component: CurrencyListComponent , canActivate: [AuthGuard]},
+  { path: 'purchases', component: PurchaseListComponent, canActivate: [AuthGuard] },
+  { path: 'purchaseCreate', component: PurchaseCreateComponent, canActivate: [AuthGuard] },
+  { path: 'purchaseEdit/:id', component: PurchaseEditComponent , canActivate: [AuthGuard]},
+  { path: 'importProduct', component: ProductImportComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

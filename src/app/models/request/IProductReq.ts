@@ -8,5 +8,5 @@ export interface IProductReq {
     sellingPrice: Number;
     category: ICategory;
     brand: IBrand;
-    productImages:FileUploadResult[];
+    images:FileUploadResult[];
 }
