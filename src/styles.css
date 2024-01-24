@@ -34,3 +34,36 @@ th {
     /* Change this to the desired hover background color */
     cursor: pointer !important;
 }
+
+.toast-success.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+        background-color: #28a745;
+
+        .mat-mdc-button {
+            color: white !important;
+        }
+    }
+
+}
+
+.toast-error.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+        background-color: #dc3545;
+
+        .mat-mdc-button {
+            color: white !important;
+        }
+    }
+
+}
+
+.toast-warning.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+        background-color: #ffc107;
+
+        .mat-mdc-button {
+            color: white !important;
+        }
+    }
+
+}
