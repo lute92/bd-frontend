@@ -1,6 +1,8 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { HttpRequest } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +15,13 @@ export class AppComponent {
   mobileQuery!: MediaQueryList;
   progressValue = 0;
 
-  private requests: HttpRequest<any>[] = [];
-
   private _mobileQueryListener: () => void;
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
+  constructor(changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher,
+    private authService: AuthService,
+    private router: Router) {
+
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -29,6 +33,11 @@ export class AppComponent {
 
   updateProgressValue(value: number) {
     this.progressValue = value;
+  }
+
+  logOut() {
+    this.authService.removeAuthToken();
+    this.router.navigate(['/login']);
   }
 
 }

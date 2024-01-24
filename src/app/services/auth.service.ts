@@ -18,4 +18,8 @@ export class AuthService {
   getAuthToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  removeAuthToken():void {
+    localStorage.removeItem('token');
+  }
 }

@@ -81,11 +81,11 @@ import { LoginComponent } from './components/login/login.component';
     NgxMatSelectSearchModule
   ],
   providers: [
-    {
+    /* {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptor,
       multi: true
-    },
+    }, */
     MatProgressBar,
     MatDatepickerModule
   ],
