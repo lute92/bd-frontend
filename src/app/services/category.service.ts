@@ -44,7 +44,7 @@ export class CategoryService extends BaseService {
   }
 
   updateCategory(category: ICategory): Observable<ICategory> {
-    const url = `${this.apiUrl}/${this.endPoint}/${category.categoryId}`;
+    const url = `${this.apiUrl}/${this.endPoint}/${category._id}`;
     return this.http.put<ICategory>(url, category, this.getRequestOptions());
   }
 

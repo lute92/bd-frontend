@@ -88,7 +88,7 @@ export class ProductCreateComponent {
         } else {
             search = search.toLowerCase();
         }
-        // filter the banks
+        
         this.filteredCategories.next(
             this.categories.filter(category => {
                 const searchTerm = search ? search.toLowerCase() : '';
@@ -142,21 +142,6 @@ export class ProductCreateComponent {
         });
     }
 
-
-    onSubmit(): void {
-        if (this.productForm.valid) {
-            const product: IProductReq = this.productForm.value;
-            // Perform save or update operation using the brand data
-
-            this.uploadFiles().subscribe((results: FileUploadResult[]) => {
-
-                this.createProduct(results);
-
-            })
-        }
-    }
-
-
     openAlertDialog(message: string, title: string) {
         const dialogRef: MatDialogRef<any> = this.dialog.open(AlertDialogComponent, {
             width: '300px',
@@ -167,7 +152,7 @@ export class ProductCreateComponent {
     getBrands(): void {
         this.brandService.getBrands(0, 0).subscribe(res => {
             //debugger
-            this.brands = res.data;
+            this.brands = res.brands;
 
             // set initial selection
             this.productForm.controls['brand'].setValue(this.brands[0]);
@@ -185,11 +170,10 @@ export class ProductCreateComponent {
         });
     }
 
-
     getCategories(): void {
         this.categoryService.getCategories(0, 0).subscribe(res => {
             //debugger
-            this.categories = res.data;
+            this.categories = res.categories;
 
             // set initial selection
             this.productForm.controls['category'].setValue(this.categories[0]);
@@ -211,22 +195,26 @@ export class ProductCreateComponent {
         this.dialogRef.close();
     }
 
-    createProduct(fileUploadResults: FileUploadResult[]): void {
+    createProduct(): void {
 
         console.log("Creating product")
         if (this.productForm.invalid) {
             return;
         }
 
+        /* if (!this.selectedFiles || this.selectedFiles.length === 0) {
+            return;
+        } */
+
         const { productName, description, sellingPrice, brand, category } = this.productForm.value;
 
         const product: any = {
             name: productName,
             description,
-            brand: brand.brandId || null,
+            brand: brand._id || null,
             sellingPrice,
-            category: category.categoryId || null,
-            images: fileUploadResults
+            category: category._id || null,
+            images: this.selectedFiles// image bytes
         };
 
         this.productService.createProduct(product)
@@ -240,10 +228,10 @@ export class ProductCreateComponent {
 
                 },
                 error => {
-                    //To-Do need to refactor the delete image flow on product creation failed
+                    /* //To-Do need to refactor the delete image flow on product creation failed
                     fileUploadResults.forEach((file) => {
                         this.deleteFileStorage(file.fileName);
-                    })
+                    }) */
                     ////debugger
                     this.openAlertDialog(error.error.message, "Failed")
                     console.error('Failed to create product:', error);

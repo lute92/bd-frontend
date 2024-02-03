@@ -44,7 +44,7 @@ export class BrandCreateComponent {
         }
 
         const brand: IBrand = {
-            brandId: "",
+            _id: "",
             name: this.brandForm.value.name,
             description: this.brandForm.value.description
         };

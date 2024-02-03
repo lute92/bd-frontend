@@ -9,7 +9,7 @@
   </div>
 </div>
 <div mat-dialog-content>
-  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="productForm" (ngSubmit)="createProduct()">
     <mat-form-field>
       <mat-label>Product name</mat-label>
       <input matInput placeholder="Product Name" formControlName="productName">

@@ -23,8 +23,7 @@ export class ProductListComponent implements OnInit {
   loading: boolean = false;
 
   displayedColumns: string[] = [
-    'image', 'productName', 'weight', 'mnuCountry',
-    'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'
+    'image', 'productName', 'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'
   ];
 
   currentPage = 1;
@@ -101,7 +100,13 @@ export class ProductListComponent implements OnInit {
   getALLProducts(): Observable<void> {
     return this.productService.getProducts(this.currentPage, this.recordLimitParPage).pipe(
       tap((res: any) => {
-        this.products = res.products;
+        
+        const productsWithTotalQuantity = res.products.map((product:any) => {
+          const totalQuantity = product.batches.reduce((sum:number, batch:any) => sum + batch.quantity, 0);
+          return { ...product, totalQuantity };
+        });
+        
+        this.products = productsWithTotalQuantity;
         this.totalPages = res.totalPages;
       }),
       catchError((error) => {

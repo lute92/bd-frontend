@@ -67,7 +67,7 @@ export class BrandService extends BaseService {
   }
 
   updateBrand(brand: IBrand): Observable<IBrand> {
-    const url = `${this.apiUrl}/${this.endPoint}/${brand.brandId}`;
+    const url = `${this.apiUrl}/${this.endPoint}/${brand._id}`;
     return this.http.put<IBrand>(url, brand, this.getRequestOptions());
   }
 

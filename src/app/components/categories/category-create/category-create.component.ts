@@ -44,7 +44,7 @@ export class CategoryCreateComponent {
         }
 
         const category: ICategory = {
-            categoryId: "",
+            _id: "",
             name: this.categoryForm.value.name,
             description: this.categoryForm.value.description
         };

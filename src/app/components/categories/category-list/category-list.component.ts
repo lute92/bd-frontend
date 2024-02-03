@@ -55,7 +55,7 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.updateCategory(category).subscribe(
       (updatedCategory: ICategory) => {
         // Update the category in the category array
-        const index = this.categories.findIndex(b => b.categoryId === updatedCategory.categoryId);
+        const index = this.categories.findIndex(item => item._id === updatedCategory._id);
         if (index !== -1) {
           this.categories[index] = updatedCategory;
         }
@@ -97,7 +97,7 @@ export class CategoryListComponent implements OnInit {
       if (result) {
         console.log('Delete confirmed');
 
-        this.categoryService.deleteCategory(category.categoryId).subscribe({
+        this.categoryService.deleteCategory(category._id).subscribe({
           next: () => {
             console.log('Category deleted!');
             this.getAllCategories()
