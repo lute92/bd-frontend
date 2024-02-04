@@ -10,11 +10,13 @@ import { PurchaseEditComponent } from './components/purchase/purchase-edit/purch
 import { ProductImportComponent } from './components/productImport/product-import.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './auth.guard';
+import { ProductCreateComponent } from './components/products/product-create/product-create.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'products', component: ProductListComponent, canActivate: [AuthGuard] },
+  { path: 'productCreate', component: ProductCreateComponent, canActivate: [AuthGuard] },
   { path: 'brands', component: BrandListComponent, canActivate: [AuthGuard] },
   { path: 'categories', component: CategoryListComponent, canActivate: [AuthGuard] },
   { path: 'currencies', component: CurrencyListComponent , canActivate: [AuthGuard]},

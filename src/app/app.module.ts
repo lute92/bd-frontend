@@ -39,6 +39,7 @@ import { PurchaseEditComponent } from './components/purchase/purchase-edit/purch
 import { PurchaseDetailEditDialogComponent } from './components/purchase/purchase-detail-edit/purchase-detail-edit-dialog.component';
 import { ProductImportComponent } from './components/productImport/product-import.component';
 import { LoginComponent } from './components/login/login.component';
+import { ProductBatchCreateComponent } from './components/products/product-batch-create/product-batch-create.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { LoginComponent } from './components/login/login.component';
     PurchaseListComponent,
     PurchaseEditComponent,
     ProductImportComponent,
-    LoginComponent
+    LoginComponent,
+    ProductBatchCreateComponent
   ],
   imports: [
     BrowserModule,

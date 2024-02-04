@@ -9,7 +9,7 @@ import { CategoryService } from 'src/app/services/category.service';
 import { IProductRes } from '../../../models/response/IProductRes';
 import { IProductReq } from 'src/app/models/request/IProductReq';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Observable, ReplaySubject, Subject, finalize, forkJoin, last, map, of, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, finalize, forkJoin, last, map, of, switchMap, takeUntil } from 'rxjs';
 import { IProductImage } from 'src/app/models/product-image';
 import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
 import { MatSelect } from '@angular/material/select';
@@ -17,6 +17,8 @@ import { CategoryCreateComponent } from '../../categories/category-create/catego
 import { BrandCreateComponent } from '../../brands/brand-create/brand-create.component';
 import { FileUploadResult } from 'src/app/models/fileupload-result';
 import { v4 as uuidv4 } from 'uuid';
+import { ProductBatchCreateComponent } from '../product-batch-create/product-batch-create.component';
+import { IProductBatch } from 'src/app/models/productBatch';
 
 @Component({
     selector: 'app-product-create',
@@ -24,6 +26,7 @@ import { v4 as uuidv4 } from 'uuid';
     styleUrls: ['./product-create.component.css']
 })
 export class ProductCreateComponent {
+
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
     @ViewChild('imageDialog') imageDialog!: TemplateRef<any>;
 
@@ -40,6 +43,12 @@ export class ProductCreateComponent {
     filePreviews: any[] = [];
     downloadUrls!: string[];
 
+    batches: IProductBatch [] = [];
+    batchesDataSource: IProductBatch[] = [];
+
+    batchListDisplayColumns: string[] = [
+        'mnuDate', 'expDate', 'quantity', 'note','actions'
+    ];
 
     /** control for the MatSelect filter keyword */
     public categoryFilterCtrl: FormControl<string | null> = new FormControl<string>('');
@@ -60,7 +69,6 @@ export class ProductCreateComponent {
         private productService: ProductService,
         private brandService: BrandService,
         private categoryService: CategoryService,
-        public dialogRef: MatDialogRef<ProductCreateComponent>,
         public dialog: MatDialog,
         private storage: AngularFireStorage,
     ) {
@@ -88,7 +96,7 @@ export class ProductCreateComponent {
         } else {
             search = search.toLowerCase();
         }
-        
+
         this.filteredCategories.next(
             this.categories.filter(category => {
                 const searchTerm = search ? search.toLowerCase() : '';
@@ -192,7 +200,7 @@ export class ProductCreateComponent {
     }
 
     cancel(): void {
-        this.dialogRef.close();
+        //this.dialogRef.close();
     }
 
     createProduct(): void {
@@ -214,7 +222,7 @@ export class ProductCreateComponent {
             brand: brand._id || null,
             sellingPrice,
             category: category._id || null,
-            images: this.selectedFiles// image bytes
+            batches: this.batches
         };
 
         this.productService.createProduct(product)
@@ -224,7 +232,7 @@ export class ProductCreateComponent {
 
                     this.productCreated.emit(createdProduct);
                     this.productForm.reset();
-                    this.dialogRef.close();
+                    //this.dialogRef.close();
 
                 },
                 error => {
@@ -312,6 +320,27 @@ export class ProductCreateComponent {
         }
 
         return uploadObservables.length > 0 ? forkJoin(uploadObservables) : of([]);
+    }
+
+    removeBatchTableItem(index:number) {
+        this.batches.splice(index, 1);
+        this.batchesDataSource = [...this.batches];
+    }
+
+    editBatchTableItem() {
+        throw new Error('Method not implemented.');
+    }
+
+    openProductBatchCreateDialog() {
+        const dialogRef = this.dialog.open(ProductBatchCreateComponent, {
+            width: '40%',
+            disableClose: true
+        });
+
+        dialogRef.componentInstance.productBatchAdded.subscribe((addedProductBatch: IProductBatch) => {
+            this.batches.push(addedProductBatch);
+            this.batchesDataSource = [...this.batches];
+        });
     }
 
 }

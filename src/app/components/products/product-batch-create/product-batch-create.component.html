@@ -1,0 +1,44 @@
+<form [formGroup]="productBatchForm" (ngSubmit)="addProductBatch()" class="form">
+  <h2 mat-dialog-title>Adding a batch</h2>
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Manufacture date</mat-label>
+      <input formControlName="mnuDate" matInput [matDatepicker]="mnuDatePicker" placeholder="Choose a date" required>
+      <mat-datepicker-toggle matSuffix [for]="mnuDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #mnuDatePicker></mat-datepicker>
+      <div matError *ngIf="productBatchForm.get('mnuDate')?.invalid && productBatchForm.get('mnuDate')?.touched"
+        class="text-danger">
+        Manufacture date is required.
+      </div>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Expire date</mat-label>
+      <input formControlName="expDate" matInput [matDatepicker]="expDatePicker" placeholder="Choose a date" required>
+      <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #expDatePicker></mat-datepicker>
+      <div matError *ngIf="productBatchForm.get('expDate')?.invalid && productBatchForm.get('expDate')?.touched"
+        class="text-danger">
+        Expire date is required.
+      </div>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Quantity</mat-label>
+      <input matInput type="number" placeholder="Quantity" formControlName="quantity">
+      <mat-error *ngIf="productBatchForm.get('quantity')?.invalid && productBatchForm.get('quantity')?.touched">
+        Quantity is required.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Note</mat-label>
+      <textarea matInput formControlName="note"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="col text-end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-button type="submit" [disabled]="productBatchForm.invalid">Add</button>
+  </mat-dialog-actions>
+</form>

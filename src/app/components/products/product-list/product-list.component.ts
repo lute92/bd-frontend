@@ -42,7 +42,8 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private categoryService: CategoryService,
     private brandService: BrandService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.initializeData();
@@ -167,6 +168,10 @@ export class ProductListComponent implements OnInit {
       console.log('Product form closed');
       this.getALLProducts();
     });
+  }
+
+  redirectToEdit(): void {
+    this.router.navigate(['/productCreate']); // Assuming '/edit/:id' is your edit route
   }
 
   openEditDialogForm(productId: string): void {
