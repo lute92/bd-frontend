@@ -4,7 +4,7 @@ import { IProductImage } from "../product-image";
 
 
 export interface IProductRes {
-    productId: string;
+    _id: string;
     productName: string;
     description: string;
     sellingPrice: Number;

@@ -40,7 +40,7 @@ export class CategoryListComponent implements OnInit {
     ).subscribe(
       (res: any) => {
         console.log("Received Data")
-        this.categories = res.data;
+        this.categories = res.categories;
         this.totalPages = res.totalPages;
       },
       (error: any) => {

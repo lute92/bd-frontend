@@ -156,7 +156,7 @@ export class PurchaseEditComponent implements OnInit {
     dialogRef.afterClosed().subscribe((newItem: IPurchaseDetail) => {
       if (newItem) {
         let result = this.purchaseDetails.find((purchase) => {
-          return purchase.product.productId === newItem.product.productId;
+          return purchase.product._id === newItem.product._id;
         })
 
         if (!result) {

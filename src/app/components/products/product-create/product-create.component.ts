@@ -224,6 +224,8 @@ export class ProductCreateComponent {
             category: category._id || null,
             batches: this.batches
         };
+        debugger
+        console.log(this.selectedFiles);
 
         this.productService.createProduct(product)
             .subscribe(

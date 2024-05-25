@@ -202,7 +202,7 @@ export class ProductListComponent implements OnInit {
       if (result) {
         console.log('Delete confirmed');
 
-        this.productService.deleteProduct(product.productId).subscribe({
+        this.productService.deleteProduct(product._id).subscribe({
           next: () => {
             console.log('Product deleted!');
             this.getALLProducts()

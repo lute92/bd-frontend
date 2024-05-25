@@ -59,7 +59,7 @@ export class BrandListComponent implements OnInit {
     ).subscribe(
       (res: any) => {
         console.log("Received Data")
-        this.brands = res.data;
+        this.brands = res.brands;
         this.totalPages = res.totalPages;
       },
       (error: any) => {
