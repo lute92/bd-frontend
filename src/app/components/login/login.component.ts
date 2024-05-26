@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -25,7 +25,7 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.http.post<{ token: string }>('http://localhost:4900/api/login', this.formData).subscribe(
+    this.http.post<{ token: string }>(`${environment.BACKEND_SERVER_URL}/login`, this.formData).subscribe(
       (response) => {
         this.authService.setAuthToken(response.token);
         this.messageService.showMessage("Login Success", 5000, "success");
