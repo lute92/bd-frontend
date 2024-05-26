@@ -95,8 +95,8 @@
         </div>
   
         <div class="file-preview-container">
-          <div *ngFor="let preview of filePreviews; let i = index" class="file-preview">
-            <img [src]="preview.url" class="file-preview-thumbnail" (click)="showImagePreview(preview.url)">
+          <div *ngFor="let url of productImageUrls; let i = index" class="file-preview">
+            <img [src]="url" class="file-preview-thumbnail" (click)="showImagePreview(url)">
             <button mat-icon-button (click)="removeImage(i)">
               <mat-icon>cancel</mat-icon>
             </button>

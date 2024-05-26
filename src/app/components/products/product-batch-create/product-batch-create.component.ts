@@ -21,7 +21,11 @@ export class ProductBatchCreateComponent {
             mnuDate: [''],
             expDate: [''],
             quantity: [''],
-            note: ['']
+            note: [''],
+            purchasePrice: [''],
+            sellingPrice: [''],
+            isPromotionitem: [''],
+            promotionPrice: ['']
 
         });
     }
@@ -39,12 +43,17 @@ export class ProductBatchCreateComponent {
             return;
         }
 
-        const addedProductBatch = {
+        const addedProductBatch:IProductBatch = {
             createdDate: 0,
             mnuDate: new Date(this.productBatchForm.value.mnuDate).getTime() / 1000,
             expDate: new Date(this.productBatchForm.value.expDate).getTime() /1000,
             quantity: this.productBatchForm.value.quantity,
-            note: this.productBatchForm.value.note
+            note: this.productBatchForm.value.note,
+            purchasePrice: this.productBatchForm.value.purchasePrice,
+            sellingPrice: this.productBatchForm.value.sellingPrice,
+            isPromotionItem: this.productBatchForm.value.isPromotionItem,
+            promotionPrice: this.productBatchForm.value.promotionPrice
+            
         };
 
         this.productBatchAdded.emit(addedProductBatch);

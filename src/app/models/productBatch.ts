@@ -5,4 +5,8 @@ export interface IProductBatch {
     expDate: number;
     quantity: number;
     note: string;
+    purchasePrice: number;
+    sellingPrice: number;
+    isPromotionItem: boolean;
+    promotionPrice: number;
 }

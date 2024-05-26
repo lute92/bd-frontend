@@ -133,7 +133,7 @@ export class PurchaseEditComponent implements OnInit {
         },
         error => {
 
-          //debugger
+          //
           this.openAlertDialog(error.error.message, "Failed")
           console.error('Failed to create product:', error);
         }

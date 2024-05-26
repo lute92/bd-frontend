@@ -19,6 +19,8 @@ import { FileUploadResult } from 'src/app/models/fileupload-result';
 import { v4 as uuidv4 } from 'uuid';
 import { ProductBatchCreateComponent } from '../product-batch-create/product-batch-create.component';
 import { IProductBatch } from 'src/app/models/productBatch';
+import { MessageService } from 'src/app/services/message.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-product-create',
@@ -43,11 +45,11 @@ export class ProductCreateComponent {
     filePreviews: any[] = [];
     downloadUrls!: string[];
 
-    batches: IProductBatch [] = [];
+    batches: IProductBatch[] = [];
     batchesDataSource: IProductBatch[] = [];
 
     batchListDisplayColumns: string[] = [
-        'mnuDate', 'expDate', 'quantity', 'note','actions'
+        'mnuDate', 'expDate', 'quantity', 'note', 'actions'
     ];
 
     /** control for the MatSelect filter keyword */
@@ -71,13 +73,15 @@ export class ProductCreateComponent {
         private categoryService: CategoryService,
         public dialog: MatDialog,
         private storage: AngularFireStorage,
+        private messageService: MessageService,
+        private router: Router
     ) {
         this.productForm = this.formBuilder.group({
             productName: ['', Validators.required],
             description: [''],
-            sellingPrice: [0],
             category: [null, Validators.required],
-            brand: [null, Validators.required]
+            brand: [null, Validators.required],
+            batches: [[]]
         });
 
         this.getBrands();
@@ -159,7 +163,7 @@ export class ProductCreateComponent {
 
     getBrands(): void {
         this.brandService.getBrands(0, 0).subscribe(res => {
-            //debugger
+            //
             this.brands = res.brands;
 
             // set initial selection
@@ -180,7 +184,7 @@ export class ProductCreateComponent {
 
     getCategories(): void {
         this.categoryService.getCategories(0, 0).subscribe(res => {
-            //debugger
+            //
             this.categories = res.categories;
 
             // set initial selection
@@ -200,54 +204,46 @@ export class ProductCreateComponent {
     }
 
     cancel(): void {
-        //this.dialogRef.close();
+        this.router.navigate(['/products']);
     }
 
     createProduct(): void {
-
-        console.log("Creating product")
         if (this.productForm.invalid) {
             return;
         }
 
-        /* if (!this.selectedFiles || this.selectedFiles.length === 0) {
-            return;
-        } */
+        const { productName, description, brand, category } = this.productForm.value;
 
-        const { productName, description, sellingPrice, brand, category } = this.productForm.value;
+        const formData = new FormData();
+        formData.append('name', productName);
+        formData.append('description', description);
+        formData.append('brand', brand._id || null);
+        formData.append('category', category._id || null);
+        formData.append('batches', JSON.stringify(this.batches)); // Convert to string before sending
 
-        const product: any = {
-            name: productName,
-            description,
-            brand: brand._id || null,
-            sellingPrice,
-            category: category._id || null,
-            batches: this.batches
-        };
-        debugger
-        console.log(this.selectedFiles);
+        for (let i = 0; i < this.selectedFiles.length; i++) {
+            formData.append('images', this.selectedFiles[i]);
+        }
 
-        this.productService.createProduct(product)
+        this.productService.createProduct(formData)
             .subscribe(
                 (createdProduct: IProductRes) => {
                     console.log('Product created successfully:', createdProduct);
-
                     this.productCreated.emit(createdProduct);
                     this.productForm.reset();
+                    this.filePreviews = [];
                     //this.dialogRef.close();
-
+                    this.messageService.showMessage("Product created.", 5000, "success");
+                    this.router.navigate(['/productCreate'])
                 },
                 error => {
-                    /* //To-Do need to refactor the delete image flow on product creation failed
-                    fileUploadResults.forEach((file) => {
-                        this.deleteFileStorage(file.fileName);
-                    }) */
-                    ////debugger
-                    this.openAlertDialog(error.error.message, "Failed")
+                    this.openAlertDialog(error.error.message, "Failed");
+                    this.messageService.showMessage(`Failed to create product: ${error}`, 5000, "error");
                     console.error('Failed to create product:', error);
                 }
             );
     }
+
 
     showImagePreview(imageUrl: string): void {
         this.dialog.open(this.imageDialog, {
@@ -256,29 +252,34 @@ export class ProductCreateComponent {
     }
 
     onFileSelected(event: any): void {
-        ////debugger
-        this.selectedFiles = Array.from(event.target.files);
-        this.filePreviews = [];
 
-        // Generate file previews
-        for (const file of this.selectedFiles) {
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                this.filePreviews.push(e.target.result);
-            };
-            reader.readAsDataURL(file);
+        if (event.target.files.length > 0) {
+            const fileList: FileList = event.target.files;
+
+            // Convert FileList to an array
+            this.selectedFiles = Array.from(fileList);
+
+            this.filePreviews = [];
+            // Generate file previews
+            for (const file of this.selectedFiles) {
+                const reader = new FileReader();
+                reader.onload = (e: any) => {
+                    this.filePreviews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
     }
 
     deleteFileStorage(name: string): void {
-        ////debugger
+        ////
         const storageRef = this.storage.ref('product-images/');
         storageRef.child(name).delete();
     }
 
     removeImage(index: number): void {
-        ////debugger
+        ////
         this.selectedFiles.splice(index, 1);
         this.filePreviews.splice(index, 1)
 
@@ -324,7 +325,7 @@ export class ProductCreateComponent {
         return uploadObservables.length > 0 ? forkJoin(uploadObservables) : of([]);
     }
 
-    removeBatchTableItem(index:number) {
+    removeBatchTableItem(index: number) {
         this.batches.splice(index, 1);
         this.batchesDataSource = [...this.batches];
     }

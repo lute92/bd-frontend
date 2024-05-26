@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product.service';
 import { IProductRes } from '../../../models/response/IProductRes';
-import { ICategory } from 'src/app/models/category';
-import { IBrand } from 'src/app/models/brand';
 import { CategoryService } from 'src/app/services/category.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { Router } from '@angular/router';
 import { ProductCreateComponent } from '../product-create/product-create.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
-import { HttpClient } from '@angular/common/http';
 import { ProductEditComponent } from '../product-edit/product-edit.component';
-import { Observable, catchError, finalize, forkJoin, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, forkJoin, from, tap, throwError } from 'rxjs';
+import { FirebaseStorageService } from 'src/app/services/firebase-storage.services';
+import { MessageService } from 'src/app/services/message.service';
 
 @Component({
   selector: 'app-product-list',
@@ -23,7 +22,7 @@ export class ProductListComponent implements OnInit {
   loading: boolean = false;
 
   displayedColumns: string[] = [
-    'image', 'productName', 'category', 'brand', 'sellingPrice', 'totalQuantity', 'actions'
+    'image', 'productName', 'category', 'brand', 'totalQuantity', 'actions'
   ];
 
   currentPage = 1;
@@ -34,7 +33,10 @@ export class ProductListComponent implements OnInit {
   categoryId: string = "";
   brandId: string = "";
 
-  products: any[] = [];
+  // Use BehaviorSubject for products
+  private productsSubject = new BehaviorSubject<IProductRes[]>([]);
+  products$: Observable<IProductRes[]> = this.productsSubject.asObservable();
+
   categories: any[] = [];
   brands: any[] = [];
 
@@ -43,7 +45,8 @@ export class ProductListComponent implements OnInit {
     private categoryService: CategoryService,
     private brandService: BrandService,
     public dialog: MatDialog,
-    private router: Router) { }
+    private messageService:MessageService,
+    private router: Router, private firebaseService: FirebaseStorageService) { }
 
   ngOnInit(): void {
     this.initializeData();
@@ -51,7 +54,7 @@ export class ProductListComponent implements OnInit {
 
   initializeData(): void {
     this.loading = true;
-  
+
     forkJoin([
       this.loadCategories(),
       this.loadBrands(),
@@ -63,10 +66,10 @@ export class ProductListComponent implements OnInit {
         return throwError(error);
       })
     ).subscribe(() => {
-      
+
     });
   }
-  
+
 
   loadCategories(): Observable<void> {
     return this.categoryService.getCategories(0, 0).pipe(
@@ -100,14 +103,24 @@ export class ProductListComponent implements OnInit {
 
   getALLProducts(): Observable<void> {
     return this.productService.getProducts(this.currentPage, this.recordLimitParPage).pipe(
-      tap((res: any) => {
+      tap(async (res: any) => {
+        const productsWithTotalQuantity = await Promise.all(res.products.map(async (product: any) => {
+          const totalQuantity = product.batches.reduce((sum: number, batch: any) => sum + batch.quantity, 0);
+          const imageUrl = product.images[0]?.url;
+          if (imageUrl) {
+            try {
+              const downloadURL = await this.firebaseService.getDownloadURL(imageUrl).toPromise();
+              return { ...product, totalQuantity, imageUrl: downloadURL };
+            } catch (error) {
+              console.error('Failed to get download URL:', error);
+              return { ...product, totalQuantity, imageUrl };
+            }
+          } else {
+            return { ...product, totalQuantity, imageUrl };
+          }
+        }));
         
-        const productsWithTotalQuantity = res.products.map((product:any) => {
-          const totalQuantity = product.batches.reduce((sum:number, batch:any) => sum + batch.quantity, 0);
-          return { ...product, totalQuantity };
-        });
-        
-        this.products = productsWithTotalQuantity;
+        this.productsSubject.next(productsWithTotalQuantity);
         this.totalPages = res.totalPages;
       }),
       catchError((error) => {
@@ -127,16 +140,44 @@ export class ProductListComponent implements OnInit {
     }
 
     this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
-      this.productName, this.brandId, this.categoryId)
-      .subscribe(
-        (response: any) => {
-          this.products = response.products;
-          this.totalPages = response.totalPages;
-        },
-        (error) => {
-          console.error(error);
-        }
+      this.productName, this.brandId, this.categoryId).pipe(
+        tap(async (res: any) => {
+          const productsWithTotalQuantity = await Promise.all(res.products.map(async (product: any) => {
+            const totalQuantity = product.batches.reduce((sum: number, batch: any) => sum + batch.quantity, 0);
+            const imageUrl = product.images[0]?.url;
+            if (imageUrl) {
+              try {
+                const downloadURL = await this.firebaseService.getDownloadURL(imageUrl).toPromise();
+                return { ...product, totalQuantity, imageUrl: downloadURL };
+              } catch (error) {
+                console.error('Failed to get download URL:', error);
+                return { ...product, totalQuantity, imageUrl };
+              }
+            } else {
+              return { ...product, totalQuantity, imageUrl };
+            }
+          }));
+          
+          this.productsSubject.next(productsWithTotalQuantity);
+          this.totalPages = res.totalPages;
+        }),
+        catchError((error) => {
+          console.error('Failed to retrieve products:', error);
+          return throwError(error);
+        })
       );
+
+      /* this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
+        this.productName, this.brandId, this.categoryId)
+        .subscribe(
+          (response: any) => {
+            this.productsSubject.next(response.products);
+            this.totalPages = response.totalPages;
+          },
+          (error) => {
+            console.error(error);
+          }
+        ); */
   }
 
 
@@ -150,9 +191,13 @@ export class ProductListComponent implements OnInit {
   deleteProduct(id: string): void {
     this.productService.deleteProduct(id).subscribe(
       () => {
-        this.getALLProducts();
+        this.getALLProducts().subscribe(() => {
+          this.messageService.showMessage("Product deleted.", 5000, "success");
+          console.log('Products refreshed');
+        });
       },
       (error) => {
+        this.messageService.showMessage("Error while deleting a product.", 5000, "error");
         console.log('Failed to delete product:', error);
       }
     );
@@ -166,7 +211,9 @@ export class ProductListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('Product form closed');
-      this.getALLProducts();
+      this.getALLProducts().subscribe(() => {
+        console.log('Products refreshed');
+      });
     });
   }
 
@@ -185,7 +232,9 @@ export class ProductListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('Product form closed');
-      this.getALLProducts();
+      this.getALLProducts().subscribe(() => {
+        console.log('Products refreshed');
+      });
     });
   }
 
@@ -205,7 +254,9 @@ export class ProductListComponent implements OnInit {
         this.productService.deleteProduct(product._id).subscribe({
           next: () => {
             console.log('Product deleted!');
-            this.getALLProducts()
+            this.getALLProducts().subscribe(() => {
+              console.log('Products refreshed');
+            });
           },
           error: (error) => {
             console.error(error);

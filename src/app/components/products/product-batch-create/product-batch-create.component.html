@@ -24,6 +24,22 @@
     </mat-form-field>
 
     <mat-form-field>
+      <mat-label>Purchase Price</mat-label>
+      <input matInput type="number" placeholder="Purchase Price" formControlName="purchasePrice">
+      <mat-error *ngIf="productBatchForm.get('purchasePrice')?.invalid && productBatchForm.get('purchasePrice')?.touched">
+        Purchase price is required.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Selling Price</mat-label>
+      <input matInput type="number" placeholder="Selling Price" formControlName="sellingPrice">
+      <mat-error *ngIf="productBatchForm.get('sellingPrice')?.invalid && productBatchForm.get('sellingPrice')?.touched">
+        Selling price is required.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
       <mat-label>Quantity</mat-label>
       <input matInput type="number" placeholder="Quantity" formControlName="quantity">
       <mat-error *ngIf="productBatchForm.get('quantity')?.invalid && productBatchForm.get('quantity')?.touched">

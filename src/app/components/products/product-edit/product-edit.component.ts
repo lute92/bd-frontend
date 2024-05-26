@@ -44,7 +44,8 @@ export class ProductEditComponent {
 
     selectedFiles: any[] = [];
     filePreviews: any[] = [];
-    downloadUrls!: string[];
+
+    productImageUrls: string[]= [];
 
     isUpdateProcessRunning: boolean = false;
     filesTouched: boolean = false;
@@ -88,7 +89,7 @@ export class ProductEditComponent {
     }
 
     async bindProductForm() {
-        debugger
+        
         await Promise.all([this.getBrands(), this.getCategories()]);
 
         // Convert ReplaySubject to array
@@ -100,7 +101,7 @@ export class ProductEditComponent {
                 //this.productInfo = {} as any; // Initialize as an empty object
 
                 if (res) {
-                    debugger
+                    
                     this.productInfo = res;
 
                     const { name, description, sellingPrice, category, brand, images, weight } = this.productInfo;
@@ -119,11 +120,15 @@ export class ProductEditComponent {
 
                     this.filePreviews = this.productInfo.images.slice();
 
-                    let downloadUrls = this.productInfo.images.map((item:any) => {return item.url});
+                    let urls = this.productInfo.images.map((item:any) => {return item.url});
 
-                    this.downloadFiles(downloadUrls).then((files) => {
+                   /*  this.downloadFiles(urls).then((files) => {
                         this.selectedFiles = files;
-                        console.log(this.selectedFiles)
+                    }) */
+
+                    this.getDownloadUrls(urls).then((firebaseStorageUrls)=> {
+                        debugger
+                        this.productImageUrls = firebaseStorageUrls;
                     })
 
                 }
@@ -350,7 +355,7 @@ export class ProductEditComponent {
 
     onFileSelected(event: any): void {
         this.filesTouched = true;
-        //debugger
+        //
         Array.from(event.target.files).forEach((file) => {
             this.selectedFiles.push(file);
 
@@ -378,7 +383,7 @@ export class ProductEditComponent {
     }
 
     deleteFileStorage(name: string): Observable<any> {
-        //debugger
+        //
         const storageRef = this.storage.ref('product-images/');
         return storageRef.child(name).delete();
     }
@@ -386,7 +391,7 @@ export class ProductEditComponent {
     removeImage(index: number): void {
         this.filesTouched = true;
         console.log(this.filesTouched);
-        //debugger
+        //
         this.selectedFiles.splice(index, 1);
         this.filePreviews.splice(index, 1)
 
@@ -441,24 +446,23 @@ export class ProductEditComponent {
         return uploadObservables.length > 0 ? forkJoin(uploadObservables) : of([]);
     }
 
-    async downloadFiles(urls: string[]): Promise<any[]> {
-        const promises: Promise<any>[] = urls.map((url) => {
-            return lastValueFrom(this.firebaseService.getFile(url));
+    async getDownloadUrls(urls: string[]): Promise<string[]> {
+        const promises: Promise<string>[] = urls.map(async (url) => {
+            try {
+                return await this.firebaseService.getDownloadUrl(url);
+            } catch (error) {
+                console.error(`Failed to get download URL for ${url}:`, error);
+                // You can choose to return a default value or handle the error in a different way
+                return ''; // or throw error;
+            }
         });
-
-        try {
-            const files: any[] = await Promise.all(promises);
-            this.selectedFiles = files;
-
-            return files;
-
-        } catch (error) {
-            throw error;
-        }
+    
+        const downloadUrls: string[] = await Promise.all(promises);
+        
+        return downloadUrls;
     }
 
     openUpdateConfirmationDialog(): void {
-
 
     }
 

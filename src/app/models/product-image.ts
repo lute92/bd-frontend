@@ -5,4 +5,5 @@ export interface IProductImage {
     product: string;
     fileName:string;
     url: string;
+    downloadUrl: string;
 }
