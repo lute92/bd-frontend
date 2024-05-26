@@ -234,7 +234,7 @@ export class ProductCreateComponent {
                     this.filePreviews = [];
                     //this.dialogRef.close();
                     this.messageService.showMessage("Product created.", 5000, "success");
-                    this.router.navigate(['/productCreate'])
+                    this.resetFileInput();
                 },
                 error => {
                     this.openAlertDialog(error.error.message, "Failed");
@@ -272,14 +272,8 @@ export class ProductCreateComponent {
 
     }
 
-    deleteFileStorage(name: string): void {
-        ////
-        const storageRef = this.storage.ref('product-images/');
-        storageRef.child(name).delete();
-    }
-
     removeImage(index: number): void {
-        ////
+        debugger
         this.selectedFiles.splice(index, 1);
         this.filePreviews.splice(index, 1)
 

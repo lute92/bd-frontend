@@ -34,3 +34,17 @@
     flex: 1 0 auto;
   }
   
+
+  .banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    padding: 5px;
+  }
+  
+  .logo {
+    height: 50px;
+    width: auto;
+  }

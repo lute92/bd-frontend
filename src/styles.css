@@ -67,3 +67,52 @@ th {
     }
 
 }
+
+.header {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 1rem;
+  text-align: center;
+}
+
+.banner {
+  background-color: var(--primary-light);
+  color: var(--secondary-dark);
+  padding: 2rem;
+  text-align: center;
+
+  .logo {
+    height: 50px;
+    width: auto;
+  }
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+  color: var(--accent-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--secondary-dark);
+  }
+}
+
+.text-muted {
+  color: var(--gray-color);
+}

@@ -13,8 +13,7 @@ export class CategoryService extends BaseService {
   private endPoint = 'categories';
   private apiUrl = `${environment.BACKEND_SERVER_URL}`;
 
-  constructor(private http: HttpClient) {
-    const authService = new AuthService();
+  constructor(private http: HttpClient, authService: AuthService) {
     super(authService);
   }
 

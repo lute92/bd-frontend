@@ -131,6 +131,7 @@ export class ProductListComponent implements OnInit {
   }
 
   searchProducts(): void {
+    debugger
     if (this.categoryId == "All") {
       this.categoryId = ""
     }
@@ -165,7 +166,7 @@ export class ProductListComponent implements OnInit {
           console.error('Failed to retrieve products:', error);
           return throwError(error);
         })
-      );
+      ).subscribe();
 
       /* this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
         this.productName, this.brandId, this.categoryId)

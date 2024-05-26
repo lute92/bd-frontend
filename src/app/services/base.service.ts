@@ -1,14 +1,20 @@
-import { HttpHeaders, HttpParams } from "@angular/common/http";
-import { AuthService } from "./auth.service";
+import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { AuthService } from './auth.service';
 
 export class BaseService {
-    private headers: HttpHeaders = new HttpHeaders();
+  protected headers: HttpHeaders = new HttpHeaders();
+  protected authService: AuthService;
 
-    constructor(private authService: AuthService){}
+  constructor(authService: AuthService) {
+    this.authService = authService;
+  }
 
-    getRequestOptions(params?: HttpParams): { headers: HttpHeaders; params?: HttpParams } {
-        // Ensure the latest token is used in the headers
-        this.headers = this.headers.set('Authorization', `Bearer ${this.authService.getAuthToken()}`);
-        return { headers: this.headers, params };
-      }
+  getRequestOptions(params?: HttpParams): { headers: HttpHeaders; params?: HttpParams } {
+    // Ensure the latest token is used in the headers
+    const token = this.authService.getAuthToken();
+    if (token) {
+      this.headers = this.headers.set('Authorization', `Bearer ${token}`);
+    }
+    return { headers: this.headers, params };
+  }
 }

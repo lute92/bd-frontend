@@ -14,8 +14,7 @@ export class BrandService extends BaseService {
   private endPoint = 'brands';
   private apiUrl = `${environment.BACKEND_SERVER_URL}`;
 
-  constructor(private http: HttpClient) {
-    const authService = new AuthService();
+  constructor(private http: HttpClient, authService: AuthService) {
     super(authService);
   }
 
