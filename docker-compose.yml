@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    image: sithukyaw1992/beautyduty-frontend:0.0.1 # Replace with your Node.js frontend image details from Docker Hub
+    image: sithukyaw1992/beautyduty-frontend:0.0.2 # Replace with your Node.js frontend image details from Docker Hub
     container_name: frontend-container
     build:
       context: .
