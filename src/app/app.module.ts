@@ -40,6 +40,7 @@ import { PurchaseDetailEditDialogComponent } from './components/purchase/purchas
 import { ProductImportComponent } from './components/productImport/product-import.component';
 import { LoginComponent } from './components/login/login.component';
 import { ProductBatchCreateComponent } from './components/products/product-batch-create/product-batch-create.component';
+import { SharedModule } from './components/shared/SharedModule';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { ProductBatchCreateComponent } from './components/products/product-batch
     MatFormFieldModule,
     AngularEditorModule,
     MatNativeDateModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    SharedModule
   ],
   providers: [
     /* {

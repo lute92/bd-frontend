@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IProductBatch } from 'src/app/models/productBatch';
 
@@ -18,15 +18,14 @@ export class ProductBatchCreateComponent {
     ) {
         this.productBatchForm = this.formBuilder.group({
             createdDate: [''],
-            mnuDate: [''],
-            expDate: [''],
-            quantity: [''],
+            mnuDate: [null, Validators.required],
+            expDate: [null],
+            purchasePrice: [null, Validators.required],
+            sellingPrice: [null, Validators.required],
+            quantity: [null, Validators.required],
             note: [''],
-            purchasePrice: [''],
-            sellingPrice: [''],
             isPromotionitem: [''],
             promotionPrice: ['']
-
         });
     }
 
@@ -43,6 +42,7 @@ export class ProductBatchCreateComponent {
             return;
         }
 
+        debugger
         const addedProductBatch:IProductBatch = {
             createdDate: 0,
             mnuDate: new Date(this.productBatchForm.value.mnuDate).getTime() / 1000,

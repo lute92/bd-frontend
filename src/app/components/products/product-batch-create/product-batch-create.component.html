@@ -2,7 +2,7 @@
   <h2 mat-dialog-title>Adding a batch</h2>
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>Manufacture date</mat-label>
+      <mat-label>Manufacture date (Required)</mat-label>
       <input formControlName="mnuDate" matInput [matDatepicker]="mnuDatePicker" placeholder="Choose a date" required>
       <mat-datepicker-toggle matSuffix [for]="mnuDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #mnuDatePicker></mat-datepicker>
@@ -14,7 +14,7 @@
 
     <mat-form-field>
       <mat-label>Expire date</mat-label>
-      <input formControlName="expDate" matInput [matDatepicker]="expDatePicker" placeholder="Choose a date" required>
+      <input formControlName="expDate" matInput [matDatepicker]="expDatePicker" placeholder="Choose a date">
       <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #expDatePicker></mat-datepicker>
       <div matError *ngIf="productBatchForm.get('expDate')?.invalid && productBatchForm.get('expDate')?.touched"
@@ -24,7 +24,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Purchase Price</mat-label>
+      <mat-label>Purchase Price (Required)</mat-label>
       <input matInput type="number" placeholder="Purchase Price" formControlName="purchasePrice">
       <mat-error *ngIf="productBatchForm.get('purchasePrice')?.invalid && productBatchForm.get('purchasePrice')?.touched">
         Purchase price is required.
@@ -32,7 +32,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Selling Price</mat-label>
+      <mat-label>Selling Price (Required)</mat-label>
       <input matInput type="number" placeholder="Selling Price" formControlName="sellingPrice">
       <mat-error *ngIf="productBatchForm.get('sellingPrice')?.invalid && productBatchForm.get('sellingPrice')?.touched">
         Selling price is required.
@@ -40,7 +40,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Quantity</mat-label>
+      <mat-label>Quantity (Required)</mat-label>
       <input matInput type="number" placeholder="Quantity" formControlName="quantity">
       <mat-error *ngIf="productBatchForm.get('quantity')?.invalid && productBatchForm.get('quantity')?.touched">
         Quantity is required.

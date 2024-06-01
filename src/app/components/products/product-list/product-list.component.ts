@@ -22,12 +22,13 @@ export class ProductListComponent implements OnInit {
   loading: boolean = false;
 
   displayedColumns: string[] = [
-    'image', 'productName', 'category', 'brand', 'totalQuantity', 'actions'
+    'image', 'productName', 'createdDate', 'category', 'brand', 'totalQuantity', 'actions'
   ];
 
   currentPage = 1;
   totalPages = 1;
-  recordLimitParPage = 5;
+  recordLimitParPage = 10;
+  totalProducts = 0;
 
   productName: string = "";
   categoryId: string = "";
@@ -45,7 +46,7 @@ export class ProductListComponent implements OnInit {
     private categoryService: CategoryService,
     private brandService: BrandService,
     public dialog: MatDialog,
-    private messageService:MessageService,
+    private messageService: MessageService,
     private router: Router, private firebaseService: FirebaseStorageService) { }
 
   ngOnInit(): void {
@@ -119,9 +120,10 @@ export class ProductListComponent implements OnInit {
             return { ...product, totalQuantity, imageUrl };
           }
         }));
-        
+
         this.productsSubject.next(productsWithTotalQuantity);
         this.totalPages = res.totalPages;
+        this.totalProducts = res.totalProducts;
       }),
       catchError((error) => {
         console.error('Failed to retrieve products:', error);
@@ -158,7 +160,7 @@ export class ProductListComponent implements OnInit {
               return { ...product, totalQuantity, imageUrl };
             }
           }));
-          
+
           this.productsSubject.next(productsWithTotalQuantity);
           this.totalPages = res.totalPages;
         }),
@@ -168,17 +170,17 @@ export class ProductListComponent implements OnInit {
         })
       ).subscribe();
 
-      /* this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
-        this.productName, this.brandId, this.categoryId)
-        .subscribe(
-          (response: any) => {
-            this.productsSubject.next(response.products);
-            this.totalPages = response.totalPages;
-          },
-          (error) => {
-            console.error(error);
-          }
-        ); */
+    /* this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
+      this.productName, this.brandId, this.categoryId)
+      .subscribe(
+        (response: any) => {
+          this.productsSubject.next(response.products);
+          this.totalPages = response.totalPages;
+        },
+        (error) => {
+          console.error(error);
+        }
+      ); */
   }
 
 

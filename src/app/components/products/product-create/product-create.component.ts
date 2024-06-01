@@ -49,7 +49,7 @@ export class ProductCreateComponent {
     batchesDataSource: IProductBatch[] = [];
 
     batchListDisplayColumns: string[] = [
-        'mnuDate', 'expDate', 'quantity', 'note', 'actions'
+        'mnuDate', 'expDate','purchasePrice','sellingPrice', 'quantity', 'note', 'actions'
     ];
 
     /** control for the MatSelect filter keyword */
@@ -234,6 +234,8 @@ export class ProductCreateComponent {
                     this.filePreviews = [];
                     //this.dialogRef.close();
                     this.messageService.showMessage("Product created.", 5000, "success");
+                    this.batches = [];
+                    this.batchesDataSource = [...this.batches];
                     this.resetFileInput();
                 },
                 error => {
@@ -333,7 +335,7 @@ export class ProductCreateComponent {
             width: '40%',
             disableClose: true
         });
-
+        debugger
         dialogRef.componentInstance.productBatchAdded.subscribe((addedProductBatch: IProductBatch) => {
             this.batches.push(addedProductBatch);
             this.batchesDataSource = [...this.batches];

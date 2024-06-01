@@ -19,8 +19,9 @@ mat-dialog-actions {
 }
 
 th {
-    color: rgb(48, 156, 6) !important;
+    color: rgb(115 127 223) !important;
     font-size: 1.1em !important;
+    text-align: center;
 }
 
 .cus-action-button {
