@@ -6,7 +6,7 @@ import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition
   providedIn: 'root',
 })
 export class MessageService {
-  horizontalPosition: MatSnackBarHorizontalPosition = 'start';
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
   
   constructor(private snackBar: MatSnackBar) {}

@@ -69,9 +69,23 @@ export class ProductService extends BaseService {
     );
   }
 
-  updateProduct(id: string, product: any): Observable<any> {
+  updateProduct(id: string, product: IProductReq): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.put<any>(url, product, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  uploadProductImages(id:string, images:any): Observable<any>{
+    const url = `${this.apiUrl}/${id}/images/`;
+    return this.http.put<any>(url, images, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  deleteProductImage(productid:string, filename:string, imageid: string): Observable<any>{
+    const url = `${this.apiUrl}/${productid}/images/${filename}/id/${imageid}`;
+    return this.http.delete<any>(url, this.getRequestOptions()).pipe(
       catchError(error => this.authService.handleServerError(error))
     );
   }

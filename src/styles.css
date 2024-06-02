@@ -20,7 +20,7 @@ mat-dialog-actions {
 
 th {
     color: rgb(115 127 223) !important;
-    font-size: 1.1em !important;
+    font-size: 0.9em !important;
     text-align: center;
 }
 
@@ -39,7 +39,7 @@ th {
 .toast-success.mat-mdc-snack-bar-container {
     .mdc-snackbar__surface {
         background-color: #28a745;
-
+        margin:2em;
         .mat-mdc-button {
             color: white !important;
         }
@@ -50,7 +50,7 @@ th {
 .toast-error.mat-mdc-snack-bar-container {
     .mdc-snackbar__surface {
         background-color: #dc3545;
-
+        margin:2em;
         .mat-mdc-button {
             color: white !important;
         }
@@ -60,8 +60,8 @@ th {
 
 .toast-warning.mat-mdc-snack-bar-container {
     .mdc-snackbar__surface {
-        background-color: #ffc107;
-
+        background-color: #d19e05;
+        margin:2em;
         .mat-mdc-button {
             color: white !important;
         }
@@ -116,4 +116,16 @@ th {
 
 .text-muted {
   color: var(--gray-color);
+}
+
+.btn-edit {
+  color:rgb(40, 39, 39) !important;
+}
+
+.btn-delete {
+  color:rgb(157, 10, 10) !important;
+}
+
+.action-btn-row {
+  display: flex;flex-direction: row;flex-wrap: nowrap;
 }

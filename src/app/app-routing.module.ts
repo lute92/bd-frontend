@@ -11,12 +11,14 @@ import { ProductImportComponent } from './components/productImport/product-impor
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './auth.guard';
 import { ProductCreateComponent } from './components/products/product-create/product-create.component';
+import { ProductEditComponent } from './components/products/product-edit/product-edit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'products', component: ProductListComponent, canActivate: [AuthGuard] },
   { path: 'productCreate', component: ProductCreateComponent, canActivate: [AuthGuard] },
+  { path: 'productEdit/:id', component: ProductEditComponent, canActivate: [AuthGuard] },
   { path: 'brands', component: BrandListComponent, canActivate: [AuthGuard] },
   { path: 'categories', component: CategoryListComponent, canActivate: [AuthGuard] },
   { path: 'currencies', component: CurrencyListComponent , canActivate: [AuthGuard]},

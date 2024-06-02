@@ -4,13 +4,11 @@ import { IProductRes } from '../../../models/response/IProductRes';
 import { CategoryService } from 'src/app/services/category.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { Router } from '@angular/router';
-import { ProductCreateComponent } from '../product-create/product-create.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
-import { ProductEditComponent } from '../product-edit/product-edit.component';
-import { BehaviorSubject, Observable, catchError, finalize, forkJoin, from, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, forkJoin, tap, throwError } from 'rxjs';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.services';
 import { MessageService } from 'src/app/services/message.service';
+import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-product-list',
@@ -45,8 +43,8 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private categoryService: CategoryService,
     private brandService: BrandService,
-    public dialog: MatDialog,
     private messageService: MessageService,
+    private dialog: MatDialog,
     private router: Router, private firebaseService: FirebaseStorageService) { }
 
   ngOnInit(): void {
@@ -169,20 +167,7 @@ export class ProductListComponent implements OnInit {
           return throwError(error);
         })
       ).subscribe();
-
-    /* this.productService.searchProducts(this.currentPage, this.recordLimitParPage,
-      this.productName, this.brandId, this.categoryId)
-      .subscribe(
-        (response: any) => {
-          this.productsSubject.next(response.products);
-          this.totalPages = response.totalPages;
-        },
-        (error) => {
-          console.error(error);
-        }
-      ); */
   }
-
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
@@ -206,43 +191,16 @@ export class ProductListComponent implements OnInit {
     );
   }
 
-  openProductForm(): void {
-    const dialogRef = this.dialog.open(ProductCreateComponent, {
-      width: '60%',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('Product form closed');
-      this.getALLProducts().subscribe(() => {
-        console.log('Products refreshed');
-      });
-    });
+  redirectToEdit(productId: string): void {
+    this.router.navigate(['/productEdit', productId]); // Assuming '/edit/is your edit route
   }
 
-  redirectToEdit(): void {
-    this.router.navigate(['/productCreate']); // Assuming '/edit/:id' is your edit route
+  redirectToCreate(): void {
+    this.router.navigate(['/productCreate']); // Assuming '/edit/is your edit route
   }
 
-  openEditDialogForm(productId: string): void {
-    const dialogRef = this.dialog.open(ProductEditComponent, {
-      width: '60%',
-      disableClose: true,
-      data: {
-        productId: productId
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('Product form closed');
-      this.getALLProducts().subscribe(() => {
-        console.log('Products refreshed');
-      });
-    });
-  }
 
   openDeleteConfirmationDialog(product: IProductRes): void {
-
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: "Delete Confirmation",
@@ -253,7 +211,7 @@ export class ProductListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('Delete confirmed');
-
+    
         this.productService.deleteProduct(product._id).subscribe({
           next: () => {
             console.log('Product deleted!');
@@ -265,7 +223,7 @@ export class ProductListComponent implements OnInit {
             console.error(error);
           }
         });
-
+    
       } else {
         // Cancel logic
         console.log('Delete canceled');

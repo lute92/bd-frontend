@@ -64,7 +64,8 @@ import { SharedModule } from './components/shared/SharedModule';
     PurchaseEditComponent,
     ProductImportComponent,
     LoginComponent,
-    ProductBatchCreateComponent
+    ProductBatchCreateComponent,
+    ProductEditComponent
   ],
   imports: [
     BrowserModule,
