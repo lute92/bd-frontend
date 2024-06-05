@@ -9,7 +9,7 @@ import { CategoryService } from 'src/app/services/category.service';
 import { IProductRes } from '../../../models/response/IProductRes';
 import { IProductReq } from 'src/app/models/request/IProductReq';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { BehaviorSubject, Observable, ReplaySubject, Subject, finalize, forkJoin, last, map, of, switchMap, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, catchError, finalize, forkJoin, last, map, of, switchMap, take, takeUntil } from 'rxjs';
 import { IProductImage } from 'src/app/models/product-image';
 import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
 import { MatSelect } from '@angular/material/select';
@@ -23,6 +23,8 @@ import { MessageService } from 'src/app/services/message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseStorageService } from 'src/app/services/firebase-storage.services';
 import { ConfirmationDialogComponent } from '../../shared/confirmation/confirmation.component';
+import { ProductBatchEditComponent } from '../product-batch-edit/product-batch-edit.component';
+import { IProduct } from 'src/app/models/product';
 
 @Component({
     selector: 'app-product-edit',
@@ -48,7 +50,7 @@ export class ProductEditComponent implements OnInit {
     downloadUrls!: string[];
     selectedFileNames: string[] = [];
 
-    productImages: {_id: string, url: string, fileName:string }[] = [];
+    productImages: { _id: string, url: string, fileName: string }[] = [];
     isUpdateProcessRunning: boolean = false;
     filesTouched: boolean = false;
 
@@ -58,6 +60,8 @@ export class ProductEditComponent implements OnInit {
     batchListDisplayColumns: string[] = [
         'mnuDate', 'expDate', 'purchasePrice', 'sellingPrice', 'quantity', 'note', 'actions'
     ];
+
+    isUploading: boolean = false;
 
     /** control for the MatSelect filter keyword */
     public categoryFilterCtrl: FormControl<string | null> = new FormControl<string>('');
@@ -130,14 +134,14 @@ export class ProductEditComponent implements OnInit {
 
                     this.filePreviews = product.images.slice();
 
-                    
+
                     let urls = product.images.map((image: any) => {
                         this.productImages.push(image);
                         return image.url;
                     });
 
                     this.getProductImageDownloadUrls(urls).then((firebaseStorageUrls) => {
-                        for(let i=0; i< firebaseStorageUrls.length; i++){
+                        for (let i = 0; i < firebaseStorageUrls.length; i++) {
                             this.productImages[i].url = firebaseStorageUrls[i];
                         }
                     })
@@ -262,11 +266,11 @@ export class ProductEditComponent implements OnInit {
         if (this.productForm.invalid) {
             return;
         }
-    
+
         const { productName, description, brand, category } = this.productForm.value;
         debugger
         const updatedFields: any = {};
-    
+
         if (productName !== this.initialProductData.productName) {
             updatedFields.name = productName;
         }
@@ -279,13 +283,13 @@ export class ProductEditComponent implements OnInit {
         if (category && category._id !== this.initialProductData.category._id) {
             updatedFields.category = category._id;
         }
-    
+
         // Only proceed if there are changes
         if (Object.keys(updatedFields).length === 0) {
             this.messageService.showMessage("No changes detected.", 10000, "warning");
             return;
         }
-    
+
         this.productService.updateProduct(this.productId, updatedFields)
             .subscribe(
                 (updatedProduct: IProductRes) => {
@@ -300,10 +304,12 @@ export class ProductEditComponent implements OnInit {
                 }
             );
     }
-    
+
 
     onFileSelected(event: any): void {
         this.filesTouched = true;
+        this.isUploading = true;
+
         const fileList: FileList = event.target.files;
 
         // Convert FileList to an array
@@ -325,15 +331,18 @@ export class ProductEditComponent implements OnInit {
                 });
 
                 this.getProductImageDownloadUrls(urls).then((firebaseStorageUrls) => {
-                    for(let i =0; i < firebaseStorageUrls.length; i++){
+                    for (let i = 0; i < firebaseStorageUrls.length; i++) {
                         this.productImages[i].url = firebaseStorageUrls[i];
                     }
+                    this.isUploading = false;
                     this.messageService.showMessage("Image uploaded.", 10000, "success");
+                    
                 })
 
 
             },
             error => {
+                this.isUploading = false;
                 this.openAlertDialog(error.error.message, "Failed to update product images.");
                 this.messageService.showMessage(`Failed to update product: ${error.message}`, 5000, "error");
                 console.error('Failed to update product:', error.message);
@@ -384,27 +393,27 @@ export class ProductEditComponent implements OnInit {
 
     removeImage(id: string): void {
 
-        let file = this.productImages.find((img)=> { return img._id === id});
-        
-        if(file){
+        let file = this.productImages.find((img) => { return img._id === id });
+
+        if (file) {
             const filename = this.getFilenameFromUrl(file.url);
             this.productService.deleteProductImage(this.productId, filename, id).subscribe(
                 (updatedProduct: IProductRes) => {
-    
+
                     this.productImages = updatedProduct.images;
-    
+
                     let urls = updatedProduct.images.map((image: any) => {
                         return image.url;
                     });
-    
+
                     this.getProductImageDownloadUrls(urls).then((firebaseStorageUrls) => {
-                        for(let i =0; i < firebaseStorageUrls.length; i++){
+                        for (let i = 0; i < firebaseStorageUrls.length; i++) {
                             this.productImages[i].url = firebaseStorageUrls[i];
                         }
                         this.messageService.showMessage("Image deleted.", 10000, "success");
                     })
-    
-    
+
+
                 },
                 error => {
                     this.openAlertDialog(error.error.message, "Failed to delete product images.");
@@ -413,7 +422,7 @@ export class ProductEditComponent implements OnInit {
                 }
             );
         }
-        
+
     }
 
     resetFileInput(): void {
@@ -468,9 +477,21 @@ export class ProductEditComponent implements OnInit {
             width: '40%',
             disableClose: true
         });
+
         dialogRef.componentInstance.productBatchAdded.subscribe((addedProductBatch: IProductBatch) => {
-            this.batches.push(addedProductBatch);
-            this.batchesDataSource = [...this.batches];
+            this.productService.createProductBatch(this.productId, addedProductBatch).pipe(
+                catchError((error) => {
+                    this.messageService.showMessage("Failed to create a batch.", 10000, "error");
+                    return of(null); // Return an observable emitting null value to complete the observable stream
+                })
+            )
+            .subscribe((res) => {
+                if (res) {
+                    this.batches = res.batches;
+                    this.batchesDataSource = [...this.batches]; // Refresh the data source
+                    this.messageService.showMessage("Batch information created.", 10000, "success");
+                }
+            });
         });
     }
 
@@ -498,16 +519,98 @@ export class ProductEditComponent implements OnInit {
     getFilenameFromUrl(url: string): string {
         // Create a new URL object from the given URL
         const parsedUrl = new URL(url);
-        
+
         // Get the pathname from the URL
         const pathname = parsedUrl.pathname;
-        
+
         // Split the pathname by '/' and get the last segment
         const segments = pathname.split('/');
         const filename = segments.pop() || '';
-        
+
         return filename;
-      }
-      
+    }
+
+    openProductBatchEditDialog(batch: IProductBatch, index: number): void {
+        const dialogRef = this.dialog.open(ProductBatchEditComponent, {
+            width: '40%',
+            data: { batch } // Pass the batch data to the dialog
+        });
+    
+        dialogRef.componentInstance.productBatchUpdated.subscribe((updatedBatch: IProductBatch) => {
+            debugger
+            if (!updatedBatch._id) {
+                return;
+            }
+    
+            this.productService.updateProductBatch(this.productId, updatedBatch._id, updatedBatch)
+                .pipe(
+                    catchError((error) => {
+                        this.messageService.showMessage("Failed to update batch info.", 10000, "error");
+                        return of(null); // Return an observable emitting null value to complete the observable stream
+                    })
+                )
+                .subscribe((res) => {
+                    if (res) {
+                        debugger
+                        this.batches[index] = updatedBatch;
+                        this.batchesDataSource = [...this.batches]; // Refresh the data source
+                        this.messageService.showMessage("Batch information updated.", 10000, "success");
+                    }
+                });
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.batches[index] = result;
+                this.batchesDataSource = [...this.batches]; // Refresh the data source
+            }
+        });
+    }
+
+    openDeleteBatchConfirmationDialog(batch: IProductBatch): void {
+        if(!batch._id){
+            return;
+        }
+        const batchId = batch._id;
+
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: "Confirmation.",
+                message: "Are you sure to delete this batch information?"
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('Delete confirmed.');
+
+                this.deleteProductBatch(batchId);
+
+            } else {
+                // Cancel logic
+                console.log('Delete canceled.');
+            }
+        });
+    }
+
+    deleteProductBatch(batchId: string): void {
+
+        this.productService.deleteProductBatch(this.productId, batchId).pipe(
+            catchError((error) => {
+                
+                this.messageService.showMessage("Failed to delete batch info.", 10000, "error");
+                return of(null); // Return an observable emitting null value to complete the observable stream
+            })
+        )
+        .subscribe((res) => {
+            if (res) {
+                this.batches = res.batches;
+                this.batchesDataSource = [...this.batches];
+                this.messageService.showMessage("Batch information deleted.", 10000, "success");
+            }
+        });
+    }
+
+
 
 }

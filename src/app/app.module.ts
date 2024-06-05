@@ -41,6 +41,7 @@ import { ProductImportComponent } from './components/productImport/product-impor
 import { LoginComponent } from './components/login/login.component';
 import { ProductBatchCreateComponent } from './components/products/product-batch-create/product-batch-create.component';
 import { SharedModule } from './components/shared/SharedModule';
+import { ProductBatchEditComponent } from './components/products/product-batch-edit/product-batch-edit.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { SharedModule } from './components/shared/SharedModule';
     ProductImportComponent,
     LoginComponent,
     ProductBatchCreateComponent,
-    ProductEditComponent
+    ProductEditComponent,
+    ProductBatchEditComponent
   ],
   imports: [
     BrowserModule,

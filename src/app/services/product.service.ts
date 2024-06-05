@@ -6,6 +6,7 @@ import { IProductRes } from '../models/response/IProductRes';
 import { environment } from '../../../src/environments/environment';
 import { BaseService } from './base.service';
 import { AuthService } from './auth.service';
+import { IProductBatch } from '../models/productBatch';
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +93,28 @@ export class ProductService extends BaseService {
 
   deleteProduct(id: string): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<any>(url, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+  
+  createProductBatch(productId:string, batch: IProductBatch): Observable<any>{
+    const url = `${this.apiUrl}/${productId}/productBatch`;
+    return this.http.post<any>(url, batch, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  updateProductBatch(productId:string, batchId:string, updatedBatch: any): Observable<any>{
+    const url = `${this.apiUrl}/${productId}/productBatch/${batchId}`;
+    return this.http.put<any>(url, updatedBatch, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  deleteProductBatch(productId:string, batchId:string): Observable<any>{
+    debugger
+    const url = `${this.apiUrl}/${productId}/productBatch/${batchId}`;
     return this.http.delete<any>(url, this.getRequestOptions()).pipe(
       catchError(error => this.authService.handleServerError(error))
     );
