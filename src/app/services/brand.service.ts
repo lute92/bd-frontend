@@ -1,34 +1,42 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, catchError } from 'rxjs';
 import { IBrand } from '../models/brand';
 import { environment } from '../../../src/environments/environment';
+import { AuthService } from './auth.service';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BrandService {
+export class BrandService extends BaseService {
 
   private endPoint = 'brands';
   private apiUrl = `${environment.BACKEND_SERVER_URL}`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, authService: AuthService) {
+    super(authService);
+  }
+
 
   searchBrands(brandName?: string, description?: string): Observable<any> {
     let params = new HttpParams();
-    
+
     if (brandName) {
       params = params.set('name', brandName);
     }
-  
+
     if (description) {
       params = params.set('description', description);
     }
-  
-    return this.http.get<any>(`${this.apiUrl}/${this.endPoint}`, { params });
+
+    return this.http.get<any>(`${this.apiUrl}/${this.endPoint}`, this.getRequestOptions(params)).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
   getBrands(page?: number, limit?: number, brandName?: string, description?: string): Observable<any> {
+    
     let params = new HttpParams();
 
     if (page) {
@@ -38,34 +46,44 @@ export class BrandService {
     if (limit) {
       params = params.set('limit', limit);
     }
-  
+
     if (brandName) {
       params = params.set('name', brandName);
     }
-  
+
     if (description) {
       params = params.set('description', description);
     }
-  
-    return this.http.get<any>(`${this.apiUrl}/${this.endPoint}`, { params });
+
+    return this.http.get<any>(`${this.apiUrl}/${this.endPoint}`, this.getRequestOptions(params)).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
   getBrandById(brandId: string): Observable<IBrand> {
     const url = `${this.apiUrl}/${this.endPoint}/${brandId}`;
-    return this.http.get<IBrand>(url);
+    return this.http.get<IBrand>(url, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
   createBrand(brand: IBrand): Observable<IBrand> {
-    return this.http.post<IBrand>(`${this.apiUrl}/${this.endPoint}`, brand);
+    return this.http.post<IBrand>(`${this.apiUrl}/${this.endPoint}`, brand, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
   updateBrand(brand: IBrand): Observable<IBrand> {
-    const url = `${this.apiUrl}/${this.endPoint}/${brand.brandId}`;
-    return this.http.put<IBrand>(url, brand);
+    const url = `${this.apiUrl}/${this.endPoint}/${brand._id}`;
+    return this.http.put<IBrand>(url, brand, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
   deleteBrand(brandId: string): Observable<void> {
     const url = `${this.apiUrl}/${this.endPoint}/${brandId}`;
-    return this.http.delete<void>(url);
+    return this.http.delete<void>(url,this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 }

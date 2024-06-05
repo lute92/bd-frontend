@@ -53,7 +53,7 @@ export class PurchaseDetailEditDialogComponent implements OnInit {
 
   getAllProducts() {
     this.productService.getProducts(0, 0).subscribe((res: any) => {
-      this.products = res.data;
+      this.products = res.products;
 
       // set initial selection
       this.purchaseDetailForm.controls['product'].setValue(this.products[0]);
@@ -99,7 +99,6 @@ export class PurchaseDetailEditDialogComponent implements OnInit {
 
   onAddClick() {
     if (this.purchaseDetailForm.valid) {
-      debugger
       this.dialogRef.close(this.purchaseDetailForm.value);
     }
   }

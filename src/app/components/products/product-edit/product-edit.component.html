@@ -1,116 +1,193 @@
-<div class="row">
-    <div class="col">
-      <h1 mat-dialog-title>Editing Product Info</h1>
-    </div>
-    <div class="col text-end">
-      <button class="m-2" color="primary" mat-button type="button" (click)="cancel()">Close
-      </button>
-  
-    </div>
-  </div>
-  <div mat-dialog-content>
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-      <mat-form-field>
-        <mat-label>Product name</mat-label>
-        <input matInput placeholder="Product Name" formControlName="productName">
-        <mat-error *ngIf="productForm.get('productName')?.invalid && productForm.get('productName')?.touched">
-          Product name is required.
-        </mat-error>
-      </mat-form-field>
-  
+<div class="container m-2 product-edit-container">
+  <form [formGroup]="productForm">
+    <div class="row m-3">
+      <div class="col">
+        <h1>Editing Product</h1>
+        
+      </div>
+      <div class="col text-end">
+        <button mat-raised-button type="button" (click)="cancel()">Back</button>
+      </div>
       <div class="row">
-        <div class="col text-end">
-          <button color="primary" mat-button type="button" (click)="openCategoryCreateForm()">Create a category
-          </button>
+        <div class="col-md-4">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title class="mb-4">Product Information</mat-card-title>
+              
+            </mat-card-header>
+            <mat-card-content>
+              <mat-divider class="mb-2"></mat-divider>
+              <div class="row">
+                <div class="col">
+                  <mat-form-field>
+                    <mat-label>Product Name</mat-label>
+                    <input matInput formControlName="productName" placeholder="Product Name">
+                    <mat-error *ngIf="productForm.controls['productName'].hasError('required')">
+                      Product Name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="col">
+                  <mat-form-field>
+                    <mat-label>Category</mat-label>
+                    <mat-select formControlName="category">
+                      <mat-option *ngFor="let category of categories" [value]="category">
+                        {{ category.name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="productForm.controls['category'].hasError('required')">
+                      Category is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="col">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Brand</mat-label>
+                    <mat-select formControlName="brand">
+                      <mat-option *ngFor="let brand of brands" [value]="brand">
+                        {{ brand.name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="productForm.controls['brand'].hasError('required')">
+                      Brand is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="col">
+                  <mat-form-field>
+                    <mat-label>Description</mat-label>
+                    <textarea matInput formControlName="description" placeholder="Description"></textarea>
+                  </mat-form-field>
+                </div>
+                <mat-divider></mat-divider>
+              </div>
+            </mat-card-content>
+            <mat-card-footer>
+              <div class="m-2 text-end">
+                <button mat-button color="primary" (click)="openUpdateConfirmationDialog()"
+                  [disabled]="productForm.invalid">
+                  <mat-icon>check</mat-icon>Save Changes</button>
+              </div>
+            </mat-card-footer>
+          </mat-card>
         </div>
-      </div>
-  
-      <div>
-        <mat-form-field>
-          <mat-label>Category</mat-label>
-          <mat-select formControlName="category" placeholder="Categoy" #singleSelect>
-            <mat-option>
-              <ngx-mat-select-search [formControl]="categoryFilterCtrl" noEntriesFoundLabel="No matching category found."
-                placeholderLabel="Type and search"></ngx-mat-select-search>
-            </mat-option>
-  
-            <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
-              {{category.name}}
-            </mat-option>
-          </mat-select>
-  
-        </mat-form-field>
-      </div>
-  
-      <div class="row">
-        <div class="col text-end">
-          <button color="primary" mat-button type="button" (click)="openBrandCreateForm()">Create a brand
-          </button>
-        </div>
-      </div>
-  
-      <div>
-        <mat-form-field>
-          <mat-label>Brand</mat-label>
-          <mat-select formControlName="brand" placeholder="Brand" #singleSelect>
-            <mat-option>
-              <ngx-mat-select-search [formControl]="brandFilterCtrl" noEntriesFoundLabel="No matching brand found."
-                placeholderLabel="Type and search"></ngx-mat-select-search>
-            </mat-option>
-  
-            <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
-              {{brand.name}}
-            </mat-option>
-          </mat-select>
-  
-        </mat-form-field>
-      </div>
-  
-  
-      <mat-form-field>
-        <mat-label>Description</mat-label>
-        <textarea matInput placeholder="Description" formControlName="description"></textarea>
-        <mat-error *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
-          Description is required.
-        </mat-error>
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label>Selling Price</mat-label>
-        <input matInput type="number" placeholder="Selling Price" formControlName="sellingPrice">
-        <mat-error *ngIf="productForm.get('sellingPrice')?.invalid && productForm.get('sellingPrice')?.touched">
-          Selling Price is required.
-        </mat-error>
-      </mat-form-field>
-  
-      <mat-divider></mat-divider>
-  
-      <div class="row mt-2">
-        <h1>Images</h1>
-      </div>
-  
-      <div class="m-3">
-        <div class="m-2 mb-4">
-          <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*">
-        </div>
-  
-        <div class="file-preview-container">
-          <div *ngFor="let preview of filePreviews; let i = index" class="file-preview">
-            <img [src]="preview.url" class="file-preview-thumbnail" (click)="showImagePreview(preview.url)">
-            <button mat-icon-button (click)="removeImage(i)">
-              <mat-icon>cancel</mat-icon>
-            </button>
+
+        <div class="col">
+          <div class="row mt-2">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title class="mb-4">Images</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <mat-divider class="mb-2"></mat-divider>
+                <div class="m-2 mb-4 text-end">
+                  <input type="file" (change)="onFileSelected($event)" #fileInput multiple hidden>
+                  
+                  <button mat-button color="primary" (click)="triggerFileInput(fileInput)">
+                    <div style="display: flex; flex-direction: row; flex-wrap: nowrap;">
+                      <mat-icon *ngIf="!isUploading">upload</mat-icon>
+                    Upload Images
+                    <mat-spinner *ngIf="isUploading" diameter="20" class="spinner"></mat-spinner>
+                    </div>
+                    
+                  </button>
+                </div>
+                <div class="m-3">
+                  <div class="file-preview-container">
+                    <div class="file-preview" *ngFor="let image of productImages; let i = index" class="file-preview">
+                      <img [src]="image.url" class="file-preview-thumbnail" (click)="showImagePreview(image.url)">
+                      <button title="Delete image" class="btn-delete" mat-icon-button (click)="removeImage(image._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #imageDialog let-data>
+                  <img [src]="data" class="full-size-image">
+                </ng-template>
+              </mat-card-content>
+            </mat-card>
           </div>
+          <div class="row mt-2">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title class="mb-4">Batches</mat-card-title>
+                <div class="col text-end">
+                  <button style="color:blue;" mat-button (click)="openProductBatchCreateDialog()"><mat-icon>add</mat-icon>Add a batch</button>
+                </div>
+              </mat-card-header>
+              <mat-card-content>
+                <mat-divider class="mb-2"></mat-divider>
+                <div class="row m-1" *ngIf="batchesDataSource.length > 0; else noDataMessage">
+                  <table mat-table [dataSource]="batchesDataSource" class="mat-elevation-z2">
+                    <ng-container matColumnDef="mnuDate">
+                      <th mat-header-cell *matHeaderCellDef>Manufacture Date</th>
+                      <td mat-cell *matCellDef="let batch">{{ batch.mnuDate | epochToDate | date: 'dd/MMM/yyyy' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="expDate">
+                      <th mat-header-cell *matHeaderCellDef>Expire Date</th>
+                      <td mat-cell *matCellDef="let batch">{{ batch.expDate | epochToDate | date: 'dd/MMM/yyyy'}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="purchasePrice">
+                      <th mat-header-cell *matHeaderCellDef>Purchase Price</th>
+                      <td mat-cell *matCellDef="let batch">{{ batch.purchasePrice }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="sellingPrice">
+                      <th mat-header-cell *matHeaderCellDef>Selling Price</th>
+                      <td mat-cell *matCellDef="let batch">{{ batch.sellingPrice }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                      <th mat-header-cell *matHeaderCellDef>Quantity</th>
+                      <td mat-cell *matCellDef="let batch">{{ batch.quantity }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="note">
+                      <th mat-header-cell *matHeaderCellDef>Note</th>
+                      <td mat-cell *matCellDef="let batch">{{ batch.note }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>Actions</th>
+                      <td mat-cell *matCellDef="let batch; let i = index">
+                        <div class="action-btn-row">
+                          <button title="Edit batch" class="btn-edit" mat-icon-button (click)="openProductBatchEditDialog(batch, i)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button title="Delete batch" class="btn-delete" mat-icon-button
+                            (click)="openDeleteBatchConfirmationDialog(batch)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+
+                      </td>
+                    </ng-container>
+
+                    <!-- Render the columns -->
+                    <tr mat-header-row *matHeaderRowDef="batchListDisplayColumns"></tr>
+                    <tr mat-row class="mat-row" *matRowDef="let row; columns: batchListDisplayColumns;"></tr>
+                  </table>
+                </div>
+
+                <ng-template #noDataMessage>
+                  <div class="col text-center">
+                    <h2>No data available!</h2>
+                  </div>
+                </ng-template>
+
+              </mat-card-content>
+            </mat-card>
+          </div>
+
         </div>
       </div>
-  
-      <ng-template #imageDialog let-data>
-        <img [src]="data" class="full-size-image">
-      </ng-template>
-  
-      <mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="cancel()">Cancel</button>
-        <button mat-button type="submit" [disabled]="productForm.invalid || (!productForm.dirty && !filesTouched) || isUpdateProcessRunning">Save Changes</button>
-      </mat-dialog-actions>
-    </form>
-  </div>
+    </div>
+
+  </form>
+</div>

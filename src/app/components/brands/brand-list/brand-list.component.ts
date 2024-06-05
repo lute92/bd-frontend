@@ -59,7 +59,7 @@ export class BrandListComponent implements OnInit {
     ).subscribe(
       (res: any) => {
         console.log("Received Data")
-        this.brands = res.data;
+        this.brands = res.brands;
         this.totalPages = res.totalPages;
       },
       (error: any) => {
@@ -81,7 +81,7 @@ export class BrandListComponent implements OnInit {
       if (result) {
         console.log('Delete confirmed');
 
-        this.brandService.deleteBrand(brand.brandId).subscribe({
+        this.brandService.deleteBrand(brand._id).subscribe({
           next: () => {
             this.getAllBrands()
           },
@@ -102,7 +102,7 @@ export class BrandListComponent implements OnInit {
     this.brandService.updateBrand(brand).subscribe(
       (updatedBrand: IBrand) => {
         // Update the brand in the brands array
-        const index = this.brands.findIndex(b => b.brandId === updatedBrand.brandId);
+        const index = this.brands.findIndex(item => item._id === updatedBrand._id);
         if (index !== -1) {
           this.brands[index] = updatedBrand;
         }

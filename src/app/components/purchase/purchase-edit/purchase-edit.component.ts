@@ -60,7 +60,6 @@ export class PurchaseEditComponent implements OnInit {
 
   ngOnInit() {
     this.getCurrencies();
-    debugger
     this.route.params.subscribe((params) => {
       this.loading = true;
       const purchaseId = params['id'];
@@ -134,7 +133,7 @@ export class PurchaseEditComponent implements OnInit {
         },
         error => {
 
-          //debugger
+          //
           this.openAlertDialog(error.error.message, "Failed")
           console.error('Failed to create product:', error);
         }
@@ -155,10 +154,9 @@ export class PurchaseEditComponent implements OnInit {
 
 
     dialogRef.afterClosed().subscribe((newItem: IPurchaseDetail) => {
-      debugger
       if (newItem) {
         let result = this.purchaseDetails.find((purchase) => {
-          return purchase.product.productId === newItem.product.productId;
+          return purchase.product._id === newItem.product._id;
         })
 
         if (!result) {

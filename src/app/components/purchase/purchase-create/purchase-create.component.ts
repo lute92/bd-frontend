@@ -93,7 +93,7 @@ export class PurchaseCreateComponent implements OnInit {
         },
         error => {
 
-          //debugger
+          //
           this.openAlertDialog(error.error.message, "Failed")
           console.error('Failed to create product:', error);
         }
@@ -114,10 +114,9 @@ export class PurchaseCreateComponent implements OnInit {
 
 
     dialogRef.afterClosed().subscribe((newItem: IPurchaseDetail) => {
-      debugger
       if (newItem) {
         let result = this.purchaseDetails.find((purchase) => {
-          return purchase.product.productId === newItem.product.productId;
+          return purchase.product._id === newItem.product._id;
         })
 
         if (!result) {

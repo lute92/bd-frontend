@@ -1,5 +1,5 @@
 <div class="container m-1">
-    <div class="row justify-content-start">
+    <div class="row justify-content-center">
         <div class="col-md-8">
             <mat-card>
                 <mat-card-header>
@@ -37,7 +37,7 @@
 
                     </div>
                     <div class="row mb-3">
-                        <table mat-table [dataSource]="brands" class="mat-elevation-z8">
+                        <table mat-table [dataSource]="brands" class="mat-elevation-z2">
                             <ng-container matColumnDef="rowNumber">
                                 <th mat-header-cell *matHeaderCellDef>#</th>
                                 <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>

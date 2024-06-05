@@ -9,7 +9,7 @@ import { CategoryService } from 'src/app/services/category.service';
 import { IProductRes } from '../../../models/response/IProductRes';
 import { IProductReq } from 'src/app/models/request/IProductReq';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Observable, ReplaySubject, Subject, finalize, forkJoin, last, map, of, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, finalize, forkJoin, last, map, of, switchMap, takeUntil } from 'rxjs';
 import { IProductImage } from 'src/app/models/product-image';
 import { AlertDialogComponent } from '../../shared/alert/alert-dialog.component';
 import { MatSelect } from '@angular/material/select';
@@ -17,6 +17,10 @@ import { CategoryCreateComponent } from '../../categories/category-create/catego
 import { BrandCreateComponent } from '../../brands/brand-create/brand-create.component';
 import { FileUploadResult } from 'src/app/models/fileupload-result';
 import { v4 as uuidv4 } from 'uuid';
+import { ProductBatchCreateComponent } from '../product-batch-create/product-batch-create.component';
+import { IProductBatch } from 'src/app/models/productBatch';
+import { MessageService } from 'src/app/services/message.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-product-create',
@@ -24,6 +28,7 @@ import { v4 as uuidv4 } from 'uuid';
     styleUrls: ['./product-create.component.css']
 })
 export class ProductCreateComponent {
+
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
     @ViewChild('imageDialog') imageDialog!: TemplateRef<any>;
 
@@ -40,6 +45,12 @@ export class ProductCreateComponent {
     filePreviews: any[] = [];
     downloadUrls!: string[];
 
+    batches: IProductBatch[] = [];
+    batchesDataSource: IProductBatch[] = [];
+
+    batchListDisplayColumns: string[] = [
+        'mnuDate', 'expDate','purchasePrice','sellingPrice', 'quantity', 'note', 'actions'
+    ];
 
     /** control for the MatSelect filter keyword */
     public categoryFilterCtrl: FormControl<string | null> = new FormControl<string>('');
@@ -60,16 +71,17 @@ export class ProductCreateComponent {
         private productService: ProductService,
         private brandService: BrandService,
         private categoryService: CategoryService,
-        public dialogRef: MatDialogRef<ProductCreateComponent>,
         public dialog: MatDialog,
         private storage: AngularFireStorage,
+        private messageService: MessageService,
+        private router: Router
     ) {
         this.productForm = this.formBuilder.group({
             productName: ['', Validators.required],
             description: [''],
-            sellingPrice: [0],
             category: [null, Validators.required],
-            brand: [null, Validators.required]
+            brand: [null, Validators.required],
+            batches: [[]]
         });
 
         this.getBrands();
@@ -88,7 +100,7 @@ export class ProductCreateComponent {
         } else {
             search = search.toLowerCase();
         }
-        // filter the banks
+
         this.filteredCategories.next(
             this.categories.filter(category => {
                 const searchTerm = search ? search.toLowerCase() : '';
@@ -142,21 +154,6 @@ export class ProductCreateComponent {
         });
     }
 
-
-    onSubmit(): void {
-        if (this.productForm.valid) {
-            const product: IProductReq = this.productForm.value;
-            // Perform save or update operation using the brand data
-
-            this.uploadFiles().subscribe((results: FileUploadResult[]) => {
-
-                this.createProduct(results);
-
-            })
-        }
-    }
-
-
     openAlertDialog(message: string, title: string) {
         const dialogRef: MatDialogRef<any> = this.dialog.open(AlertDialogComponent, {
             width: '300px',
@@ -166,8 +163,8 @@ export class ProductCreateComponent {
 
     getBrands(): void {
         this.brandService.getBrands(0, 0).subscribe(res => {
-            //debugger
-            this.brands = res.data;
+            //
+            this.brands = res.brands;
 
             // set initial selection
             this.productForm.controls['brand'].setValue(this.brands[0]);
@@ -185,11 +182,10 @@ export class ProductCreateComponent {
         });
     }
 
-
     getCategories(): void {
         this.categoryService.getCategories(0, 0).subscribe(res => {
-            //debugger
-            this.categories = res.data;
+            //
+            this.categories = res.categories;
 
             // set initial selection
             this.productForm.controls['category'].setValue(this.categories[0]);
@@ -208,48 +204,48 @@ export class ProductCreateComponent {
     }
 
     cancel(): void {
-        this.dialogRef.close();
+        this.router.navigate(['/products']);
     }
 
-    createProduct(fileUploadResults: FileUploadResult[]): void {
-
-        console.log("Creating product")
+    createProduct(): void {
         if (this.productForm.invalid) {
             return;
         }
 
-        const { productName, description, sellingPrice, brand, category } = this.productForm.value;
+        const { productName, description, brand, category } = this.productForm.value;
 
-        const product: IProductReq = {
-            name: productName,
-            description,
-            brand: brand.brandId || null,
-            sellingPrice,
-            category: category.categoryId || null,
-            productImages: fileUploadResults
-        };
+        const formData = new FormData();
+        formData.append('name', productName);
+        formData.append('description', description);
+        formData.append('brand', brand._id || null);
+        formData.append('category', category._id || null);
+        formData.append('batches', JSON.stringify(this.batches)); // Convert to string before sending
 
-        this.productService.createProduct(product)
+        for (let i = 0; i < this.selectedFiles.length; i++) {
+            formData.append('images', this.selectedFiles[i]);
+        }
+
+        this.productService.createProduct(formData)
             .subscribe(
                 (createdProduct: IProductRes) => {
                     console.log('Product created successfully:', createdProduct);
-
                     this.productCreated.emit(createdProduct);
                     this.productForm.reset();
-                    this.dialogRef.close();
-
+                    this.filePreviews = [];
+                    //this.dialogRef.close();
+                    this.messageService.showMessage("Product created.", 5000, "success");
+                    this.batches = [];
+                    this.batchesDataSource = [...this.batches];
+                    this.resetFileInput();
                 },
                 error => {
-                    //To-Do need to refactor the delete image flow on product creation failed
-                    fileUploadResults.forEach((file) => {
-                        this.deleteFileStorage(file.fileName);
-                    })
-                    ////debugger
-                    this.openAlertDialog(error.error.message, "Failed")
+                    this.openAlertDialog(error.error.message, "Failed");
+                    this.messageService.showMessage(`Failed to create product: ${error}`, 5000, "error");
                     console.error('Failed to create product:', error);
                 }
             );
     }
+
 
     showImagePreview(imageUrl: string): void {
         this.dialog.open(this.imageDialog, {
@@ -258,29 +254,28 @@ export class ProductCreateComponent {
     }
 
     onFileSelected(event: any): void {
-        ////debugger
-        this.selectedFiles = Array.from(event.target.files);
-        this.filePreviews = [];
 
-        // Generate file previews
-        for (const file of this.selectedFiles) {
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                this.filePreviews.push(e.target.result);
-            };
-            reader.readAsDataURL(file);
+        if (event.target.files.length > 0) {
+            const fileList: FileList = event.target.files;
+
+            // Convert FileList to an array
+            this.selectedFiles = Array.from(fileList);
+
+            this.filePreviews = [];
+            // Generate file previews
+            for (const file of this.selectedFiles) {
+                const reader = new FileReader();
+                reader.onload = (e: any) => {
+                    this.filePreviews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
     }
 
-    deleteFileStorage(name: string): void {
-        ////debugger
-        const storageRef = this.storage.ref('product-images/');
-        storageRef.child(name).delete();
-    }
-
     removeImage(index: number): void {
-        ////debugger
+        debugger
         this.selectedFiles.splice(index, 1);
         this.filePreviews.splice(index, 1)
 
@@ -324,6 +319,27 @@ export class ProductCreateComponent {
         }
 
         return uploadObservables.length > 0 ? forkJoin(uploadObservables) : of([]);
+    }
+
+    removeBatchTableItem(index: number) {
+        this.batches.splice(index, 1);
+        this.batchesDataSource = [...this.batches];
+    }
+
+    editBatchTableItem() {
+        throw new Error('Method not implemented.');
+    }
+
+    openProductBatchCreateDialog() {
+        const dialogRef = this.dialog.open(ProductBatchCreateComponent, {
+            width: '40%',
+            disableClose: true
+        });
+        debugger
+        dialogRef.componentInstance.productBatchAdded.subscribe((addedProductBatch: IProductBatch) => {
+            this.batches.push(addedProductBatch);
+            this.batchesDataSource = [...this.batches];
+        });
     }
 
 }

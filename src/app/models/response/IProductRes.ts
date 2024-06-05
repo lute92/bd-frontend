@@ -1,10 +1,11 @@
 import { IBrand } from "../brand";
 import { ICategory } from "../category";
 import { IProductImage } from "../product-image";
+import { IProductBatch } from "../productBatch";
 
 
 export interface IProductRes {
-    productId: string;
+    _id: string;
     productName: string;
     description: string;
     sellingPrice: Number;
@@ -12,4 +13,5 @@ export interface IProductRes {
     brand: string;
     totalQuantity?: Number ;
     images: IProductImage[];
+    batches: IProductBatch[];
 }

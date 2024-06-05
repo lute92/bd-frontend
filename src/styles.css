@@ -19,8 +19,9 @@ mat-dialog-actions {
 }
 
 th {
-    color: rgb(48, 156, 6) !important;
-    font-size: 1.1em !important;
+    color: rgb(115 127 223) !important;
+    font-size: 0.9em !important;
+    text-align: center;
 }
 
 .cus-action-button {
@@ -33,4 +34,98 @@ th {
     background-color: #e6ebf2 !important;
     /* Change this to the desired hover background color */
     cursor: pointer !important;
+}
+
+.toast-success.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+        background-color: #28a745;
+        margin:2em;
+        .mat-mdc-button {
+            color: white !important;
+        }
+    }
+
+}
+
+.toast-error.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+        background-color: #dc3545;
+        margin:2em;
+        .mat-mdc-button {
+            color: white !important;
+        }
+    }
+
+}
+
+.toast-warning.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+        background-color: #d19e05;
+        margin:2em;
+        .mat-mdc-button {
+            color: white !important;
+        }
+    }
+
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 1rem;
+  text-align: center;
+}
+
+.banner {
+  background-color: var(--primary-light);
+  color: var(--secondary-dark);
+  padding: 2rem;
+  text-align: center;
+
+  .logo {
+    height: 50px;
+    width: auto;
+  }
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+  color: var(--accent-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--secondary-dark);
+  }
+}
+
+.text-muted {
+  color: var(--gray-color);
+}
+
+.btn-edit {
+  color:rgb(40, 39, 39) !important;
+}
+
+.btn-delete {
+  color:rgb(157, 10, 10) !important;
+}
+
+.action-btn-row {
+  display: flex;flex-direction: row;flex-wrap: nowrap;
 }

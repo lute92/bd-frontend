@@ -4,38 +4,67 @@
     <div class="row" style="width:100%">
       <div class="col-4 d-flex align-items-center">
         <button mat-icon-button class="example-icon" (click)="snav.toggle()"
-          aria-label="Example icon-button with menu icon">
+          aria-label="Example icon-button with menu icon" *ngIf="isAuthenticated">
           <mat-icon>menu</mat-icon>
         </button>
-        <span>{{title}}</span>
+        <div class="banner">
+          <img src="../assets/logo.png" class="logo" alt="logo">
+        </div>
+        <span class="m-2">{{title}} </span>
       </div>
       <div class="col d-flex justify-content-center">
         <p style="font-size:0.7em; font-weight: normal;">Powered by NovaTech ©2023</p>
       </div>
       <div class="col d-flex justify-content-end">
-        <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+        <button *ngIf="isAuthenticated" mat-icon-button class="example-icon"
+          aria-label="Example icon-button with share icon">
           <mat-icon>notifications</mat-icon>
         </button>
-        <button mat-icon-button class="person-icon" aria-label="User Account">
+        <button *ngIf="isAuthenticated" mat-icon-button [matMenuTriggerFor]="menu" class="person-icon"
+          aria-label="User Account">
           <mat-icon>person</mat-icon>
         </button>
 
+        <mat-menu #menu="matMenu" class="mt-2">
+          <button mat-menu-item (click)="logOut()">
+            <mat-icon>lock</mat-icon>Log out
+          </button>
+        </mat-menu>
       </div>
     </div>
-    
-
   </mat-toolbar>
-  <!-- <mat-progress-bar class="pt-1" mode="determinate" color="primary"></mat-progress-bar> -->
   <mat-sidenav-container class="page-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-
-    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" class="page-sidenav" opened
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" class="page-sidenav" [opened]="isAuthenticated"
       [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
-
       <mat-nav-list>
-        <a mat-list-item href="#" position="start">Products</a>
-        <a mat-list-item href="/categories">Categories</a>
-        <a mat-list-item href="/brands">Brands</a>
-        <a mat-list-item href="/currencies">Currencies</a>
+        <a mat-list-item href="/products" position="start">
+          <div style="display: flex; align-items: center;">
+            <mat-icon style="color:rgb(115 127 223);">inventory_2</mat-icon>
+            <span style="padding-left:1em;color:rgb(115 127 223);">Products</span>
+          </div>
+        </a>
+
+        <a mat-list-item href="/categories" position="start">
+          <div style="display: flex; align-items: center;">
+            <mat-icon style="color:rgb(115 127 223);">category</mat-icon>
+            <span style="padding-left:1em;color:rgb(115 127 223);">Categories</span>
+          </div>
+        </a>
+
+        <a mat-list-item href="/brands" position="start">
+          <div style="display: flex; align-items: center;">
+            <mat-icon mat-list-icon style="color:rgb(115 127 223);">branding_watermark</mat-icon>
+            <span style="padding-left:1em;color:rgb(115 127 223);">Brands</span>
+          </div>
+        </a>
+
+        <a mat-list-item href="/currencies" position="start">
+          <div style="display: flex; align-items: center;">
+            <mat-icon mat-list-icon style="color:rgb(115 127 223);">local_atm</mat-icon>
+            <span style="padding-left:1em;color:rgb(115 127 223);">Currencies</span>
+          </div>
+        </a>
+        
         <hr />
         <a mat-list-item href="#">Sales</a>
         <a mat-list-item href="/purchases">Purchase</a>
@@ -44,10 +73,8 @@
         <a mat-list-item href="#">Settings</a>
       </mat-nav-list>
     </mat-sidenav>
-
     <mat-sidenav-content>
-      <router-outlet>
-      </router-outlet>
+      <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

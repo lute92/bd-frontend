@@ -1,71 +1,122 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
 import { IProductReq } from '../models/request/IProductReq';
 import { IProductRes } from '../models/response/IProductRes';
 import { environment } from '../../../src/environments/environment';
+import { BaseService } from './base.service';
+import { AuthService } from './auth.service';
+import { IProductBatch } from '../models/productBatch';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ProductService extends BaseService {
   private endPoint = 'products';
   private apiUrl = `${environment.BACKEND_SERVER_URL}/${this.endPoint}`;
 
-  constructor(private http: HttpClient) { }
-
-  getProducts(page:number, limit:number): Observable<any> {
-
-    const params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
-
-    return this.http.get<any>(`${this.apiUrl}`, {params});
+  constructor(private http: HttpClient, authService: AuthService) {
+    super(authService);
   }
 
-  getProduct(id: string | null = ""): Observable<IProductRes> {
+  getProducts(page: number, limit: number): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<any>(`${this.apiUrl}`, this.getRequestOptions(params)).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  getProduct(id: string | null = ""): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<IProductRes>(url);
+    return this.http.get<IProductRes>(url, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
-  searchProducts(page:number, limit:number, name?: string, brandId?: string, categoryId?: string): Observable<any[]> {
-    let params = '';
+  searchProducts(page: number, limit: number, name?: string, brandId?: string, categoryId?: string): Observable<any[]> {
+    let params = new HttpParams();
 
     if (page) {
-      params += `page=${encodeURIComponent(page)}&`;
+      params = params.set('page', page.toString());
     }
 
     if (limit) {
-      params += `limit=${encodeURIComponent(limit)}&`;
+      params = params.set('limit', limit.toString());
     }
 
     if (name) {
-      params += `name=${encodeURIComponent(name)}&`;
+      params = params.set('name', name);
     }
 
     if (brandId) {
-      params += `brandId=${encodeURIComponent(brandId)}&`;
+      params = params.set('brandId', brandId);
     }
 
     if (categoryId) {
-      params += `categoryId=${encodeURIComponent(categoryId)}&`;
+      params = params.set('categoryId', categoryId);
     }
 
-    params = params.slice(0, -1); // Remove trailing "&" character
-
-    const url = `${this.apiUrl}/search?${params}`;
-    return this.http.get<any[]>(url);
+    return this.http.get<any[]>(`${this.apiUrl}/search`, this.getRequestOptions(params)).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
-  createProduct(product: IProductReq): Observable<any> {
-    return this.http.post<IProductReq>(`${this.apiUrl}/`, product);
+  createProduct(product: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/`, product, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
-  updateProduct(id: string, product: IProductReq): Observable<IProductRes> {
+  updateProduct(id: string, product: IProductReq): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<IProductRes>(url, product);
+    return this.http.put<any>(url, product, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  uploadProductImages(id:string, images:any): Observable<any>{
+    const url = `${this.apiUrl}/${id}/images/`;
+    return this.http.put<any>(url, images, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  deleteProductImage(productid:string, filename:string, imageid: string): Observable<any>{
+    const url = `${this.apiUrl}/${productid}/images/${filename}/id/${imageid}`;
+    return this.http.delete<any>(url, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 
   deleteProduct(id: string): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.delete(url);
+    return this.http.delete<any>(url, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+  
+  createProductBatch(productId:string, batch: IProductBatch): Observable<any>{
+    const url = `${this.apiUrl}/${productId}/productBatch`;
+    return this.http.post<any>(url, batch, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  updateProductBatch(productId:string, batchId:string, updatedBatch: any): Observable<any>{
+    const url = `${this.apiUrl}/${productId}/productBatch/${batchId}`;
+    return this.http.put<any>(url, updatedBatch, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
+  }
+
+  deleteProductBatch(productId:string, batchId:string): Observable<any>{
+    debugger
+    const url = `${this.apiUrl}/${productId}/productBatch/${batchId}`;
+    return this.http.delete<any>(url, this.getRequestOptions()).pipe(
+      catchError(error => this.authService.handleServerError(error))
+    );
   }
 }
